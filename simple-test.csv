@@ -1,0 +1,4 @@
+Nom,Téléphone,Catégorie,Adresse,SiteWeb,Reviews
+شركة الاختبار الأولى,+963 933 365 544,Software company,دمشق - سوريا,https://example1.com,"[{""author"":""أحمد محمد"",""text"":""خدمة ممتازة"",""rating"":5,""date"":""1 year ago""}]"
+شركة الاختبار الثانية,079 123 4567,Restaurant,عمان - الأردن,https://example2.com,"[{""author"":""فاطمة علي"",""text"":""طعام لذيذ"",""rating"":4,""date"":""6 months ago""}]"
+شركة الاختبار الثالثة,050 555 1234,IT company,الرياض - السعودية,https://example3.com,"[{""author"":""محمد سالم"",""text"":""فريق محترف"",""rating"":5,""date"":""3 months ago""}]"

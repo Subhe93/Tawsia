@@ -1,0 +1,735 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// جدول البلدان
+model Country {
+  id              String    @id @default(cuid())
+  code            String    @unique // كود البلد (sy, lb, jo, eg)
+  name            String    // اسم البلد باللغة العربية
+  flag            String?   // رمز العلم
+  image           String?   // رابط صورة البلد
+  description     String?   // وصف البلد
+  companiesCount  Int       @default(0) // عدد الشركات
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // العلاقات
+  cities          City[]
+  companies       Company[]
+  subAreas        SubArea[]
+  rankingPages    RankingPage[]
+
+  @@map("countries")
+}
+
+// جدول المدن
+model City {
+  id              String    @id @default(cuid())
+  slug            String    @unique // معرف فريد للمدينة
+  name            String    // اسم المدينة باللغة العربية
+  countryId       String    // معرف البلد
+  countryCode     String    // للاستعلامات السريعة
+  image           String?   // رابط صورة المدينة
+  description     String?   // وصف المدينة
+  companiesCount  Int       @default(0) // عدد الشركات
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // العلاقات
+  country         Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  companies       Company[]
+  subAreas        SubArea[]
+  rankingPages    RankingPage[]
+
+  @@index([countryCode])
+  @@index([slug])
+  @@map("cities")
+}
+
+// جدول المناطق الفرعية
+model SubArea {
+  id              String    @id @default(cuid())
+  slug            String    @unique // معرف فريد للمنطقة الفرعية
+  name            String    // اسم المنطقة الفرعية باللغة العربية
+  cityId          String    // معرف المدينة
+  cityCode        String    // للاستعلامات السريعة
+  countryId       String    // معرف البلد
+  countryCode     String    // للاستعلامات السريعة
+  image           String?   // رابط صورة المنطقة الفرعية
+  description     String?   // وصف المنطقة الفرعية
+  companiesCount  Int       @default(0) // عدد الشركات
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // العلاقات
+  city            City      @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  country         Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  companies       Company[]
+  rankingPages    RankingPage[]
+
+  @@index([cityCode])
+  @@index([countryCode])
+  @@index([slug])
+  @@map("sub_areas")
+}
+
+// جدول الفئات
+model Category {
+  id              String    @id @default(cuid())
+  slug            String    @unique // معرف فريد للفئة
+  name            String    // اسم الفئة باللغة العربية
+  icon            String?   // اسم الأيقونة (Lucide React)
+  description     String?   // وصف الفئة
+  companiesCount  Int       @default(0) // عدد الشركات
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // العلاقات
+  companies       Company[]
+  subCategories   SubCategory[]
+  rankingPages    RankingPage[]
+
+  @@index([slug])
+  @@map("categories")
+}
+
+// جدول التصنيفات الفرعية
+model SubCategory {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  name            String
+  description     String?
+  icon            String?
+  companiesCount  Int       @default(0)
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relation to parent category
+  categoryId      String
+  category        Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  // Relation to companies
+  companies       Company[]
+  rankingPages    RankingPage[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@map("sub_categories")
+}
+
+// جدول الشركات
+model Company {
+  id                String    @id @default(cuid())
+  slug              String    @unique // معرف فريد للشركة
+  name              String    // اسم الشركة
+  description       String?   // وصف الشركة
+  shortDescription  String?   // وصف مختصر
+  longDescription   String?   // وصف مفصل
+  categoryId        String    // معرف الفئة
+  subCategoryId     String?   // معرف التصنيف الفرعي
+  cityId            String    // معرف المدينة
+  subAreaId         String?   // معرف المنطقة الفرعية
+  countryId         String    // معرف البلد
+  
+  // معلومات الاتصال
+  phone             String?
+  email             String?
+  website           String?
+  address           String?
+  
+  // الصور
+  mainImage         String?   // الصورة الرئيسية
+  logoImage         String?   // لوغو الشركة
+  
+  // التقييمات
+  rating            Float     @default(0) // متوسط التقييم
+  reviewsCount      Int       @default(0) // عدد المراجعات
+  
+  // الموقع الجغرافي
+  latitude          Float?    // خط العرض
+  longitude         Float?    // خط الطول
+  
+  // الحالة
+  isVerified        Boolean   @default(false) // شركة موثقة
+  isFeatured        Boolean   @default(false) // شركة مميزة
+  isActive          Boolean   @default(true)
+  
+  // الخدمات والتخصصات
+  services          String[]  // قائمة الخدمات
+  specialties       String[]  // قائمة التخصصات
+  
+  // الأوقات
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // العلاقات
+  country           Country       @relation(fields: [countryId], references: [id])
+  city              City          @relation(fields: [cityId], references: [id])
+  subArea           SubArea?      @relation(fields: [subAreaId], references: [id], onDelete: SetNull)
+  category          Category      @relation(fields: [categoryId], references: [id])
+  subCategory       SubCategory?  @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
+  images            CompanyImage[]
+  tags              CompanyTag[]
+  workingHours      WorkingHours[]
+  socialMedia       SocialMedia[]
+  reviews           Review[]
+  awards            Award[]
+  owners            CompanyOwner[]
+  notifications     Notification[]
+
+  @@index([countryId])
+  @@index([cityId])
+  @@index([subAreaId])
+  @@index([categoryId])
+  @@index([subCategoryId])
+  @@index([rating])
+  @@index([slug])
+  @@index([isVerified])
+  @@index([isFeatured])
+  @@map("companies")
+}
+
+// جدول صور الشركات
+model CompanyImage {
+  id          String    @id @default(cuid())
+  companyId   String    // معرف الشركة
+  imageUrl    String    // رابط الصورة
+  altText     String?   // نص بديل
+  sortOrder   Int       @default(0) // ترتيب الصورة
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  // العلاقات
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("company_images")
+}
+
+// جدول علامات الشركات
+model CompanyTag {
+  id          String    @id @default(cuid())
+  companyId   String    // معرف الشركة
+  tagName     String    // اسم العلامة
+  createdAt   DateTime  @default(now())
+
+  // العلاقات
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([tagName])
+  @@map("company_tags")
+}
+
+// جدول ساعات العمل
+model WorkingHours {
+  id          String    @id @default(cuid())
+  companyId   String    // معرف الشركة
+  dayOfWeek   DayOfWeek // يوم الأسبوع
+  openTime    String?   // وقت الفتح (HH:MM)
+  closeTime   String?   // وقت الإغلاق (HH:MM)
+  isClosed    Boolean   @default(false) // مغلق في هذا اليوم
+
+  // العلاقات
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, dayOfWeek])
+  @@index([companyId])
+  @@map("working_hours")
+}
+
+// جدول وسائل التواصل الاجتماعي
+model SocialMedia {
+  id          String    @id @default(cuid())
+  companyId   String    // معرف الشركة
+  platform    String    // المنصة (facebook, twitter, instagram, linkedin)
+  url         String    // رابط المنصة
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  // العلاقات
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, platform])
+  @@index([companyId])
+  @@map("company_social_media")
+}
+
+// جدول المراجعات
+model Review {
+  id              String    @id @default(cuid())
+  companyId       String    // معرف الشركة
+  userId          String?   // معرف المستخدم (إذا كان مسجل)
+  userName        String    // اسم المستخدم
+  userEmail       String?   // بريد المستخدم
+  userAvatar      String?   // صورة المستخدم
+  rating          Int       // التقييم 1-5
+  title           String    // عنوان المراجعة
+  comment         String    // نص المراجعة
+  helpfulCount    Int       @default(0) // عدد المفيد
+  notHelpfulCount Int       @default(0) // عدد غير المفيد
+  isVerified      Boolean   @default(false) // مراجعة موثقة
+  isApproved      Boolean   @default(false) // معتمدة من المدير
+  ipAddress       String?   // عنوان IP
+  userAgent       String?   // معلومات المتصفح
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // العلاقات
+  company         Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user            User?         @relation(fields: [userId], references: [id])
+  images          ReviewImage[]
+  ratings         ReviewRating[]
+  replies         ReviewReply[]
+  reports         ReviewReport[]
+
+  @@index([companyId])
+  @@index([rating])
+  @@index([createdAt])
+  @@index([isApproved])
+  @@map("reviews")
+}
+
+// جدول صور المراجعات
+model ReviewImage {
+  id          String    @id @default(cuid())
+  reviewId    String    // معرف المراجعة
+  imageUrl    String    // رابط الصورة
+  altText     String?   // نص بديل
+  sortOrder   Int       @default(0) // ترتيب الصورة
+  createdAt   DateTime  @default(now())
+
+  // العلاقات
+  review      Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("review_images")
+}
+
+// جدول تقييم المراجعات
+model ReviewRating {
+  id          String    @id @default(cuid())
+  reviewId    String    // معرف المراجعة
+  ipAddress   String    // عنوان IP
+  isHelpful   Boolean   // true للمفيد، false لغير المفيد
+  createdAt   DateTime  @default(now())
+
+  // العلاقات
+  review      Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, ipAddress])
+  @@index([reviewId])
+  @@map("review_ratings")
+}
+
+// جدول ردود المراجعات
+model ReviewReply {
+  id          String    @id @default(cuid())
+  reviewId    String    // معرف المراجعة
+  userId      String    // معرف المستخدم الذي رد
+  content     String    // محتوى الرد
+  isFromOwner Boolean   @default(false) // هل الرد من مالك الشركة
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // العلاقات
+  review      Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([userId])
+  @@map("review_replies")
+}
+
+model ReviewReport {
+  id            String       @id @default(cuid())
+  reviewId      String
+  reason        ReportReason
+  description   String
+  reporterEmail String?
+  status        ReportStatus @default(PENDING)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  review        Review       @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([status])
+  @@map("review_reports")
+}
+
+// جدول الجوائز
+model Award {
+  id          String    @id @default(cuid())
+  companyId   String    // معرف الشركة
+  title       String    // عنوان الجائزة
+  description String?   // وصف الجائزة
+  year        Int?      // سنة الجائزة
+  awardType   AwardType @default(CERTIFICATE) // نوع الجائزة
+  issuer      String?   // الجهة المانحة
+  imageUrl    String?   // صورة الجائزة
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  // العلاقات
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([year])
+  @@map("awards")
+}
+
+// جدول المستخدمين
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique // البريد الإلكتروني
+  name        String    // اسم المستخدم
+  avatar      String?   // صورة المستخدم
+  role        UserRole  @default(USER) // دور المستخدم
+  password    String?   // كلمة المرور (مشفرة)
+  tempPassword String?  // كلمة مرور مؤقتة
+  isActive    Boolean   @default(true)
+  isVerified  Boolean   @default(false) // تأكيد البريد الإلكتروني
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // العلاقات
+  reviews     Review[]
+  reviewReplies ReviewReply[]
+  ownedCompanies CompanyOwner[]
+  sessions    Session[]
+  notifications Notification[]
+  seoOverrides SeoOverride[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// جدول مالكي الشركات
+model CompanyOwner {
+  id          String    @id @default(cuid())
+  companyId   String    // معرف الشركة
+  userId      String    // معرف المستخدم
+  role        OwnerRole @default(OWNER) // دور المالك
+  isPrimary   Boolean   @default(false) // مالك رئيسي
+  permissions String[]  // صلاحيات المالك
+  createdAt   DateTime  @default(now())
+
+  // العلاقات
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, userId])
+  @@index([companyId])
+  @@index([userId])
+  @@map("company_owners")
+}
+
+// جدول طلبات إضافة الشركات
+model CompanyRequest {
+  id              String        @id @default(cuid())
+  companyName     String        // اسم الشركة
+  description     String        // وصف الشركة
+  category        String        // فئة الشركة
+  country         String        // البلد
+  city            String        // المدينة
+  address         String?       // العنوان
+  phone           String        // رقم الهاتف
+  email           String        // البريد الإلكتروني
+  website         String?       // الموقع الإلكتروني
+  foundedYear     Int?          // سنة التأسيس
+  companySize     String?       // حجم الشركة
+  services        String        // الخدمات والمنتجات
+  
+  // معلومات المسؤول
+  ownerName       String        // اسم المسؤول
+  ownerEmail      String        // بريد المسؤول
+  ownerPhone      String        // هاتف المسؤول
+  
+  // وسائل التواصل الاجتماعي
+  socialMedia     Json?         // روابط وسائل التواصل
+  
+  // حالة الطلب
+  status          RequestStatus @default(PENDING)
+  adminNotes      String?       // ملاحظات المدير
+  reviewedBy      String?       // معرف المدير المراجع
+  reviewedAt      DateTime?     // تاريخ المراجعة
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("company_requests")
+}
+
+// جدول الإحصائيات اليومية
+model DailyStats {
+  id              String    @id @default(cuid())
+  date            DateTime  @unique @db.Date // التاريخ
+  totalCompanies  Int       @default(0) // إجمالي الشركات
+  totalReviews    Int       @default(0) // إجمالي المراجعات
+  totalUsers      Int       @default(0) // إجمالي المستخدمين
+  newCompanies    Int       @default(0) // شركات جديدة
+  newReviews      Int       @default(0) // مراجعات جديدة
+  newUsers        Int       @default(0) // مستخدمين جدد
+  pageViews       Int       @default(0) // مشاهدات الصفحات
+  searches        Int       @default(0) // عمليات البحث
+  createdAt       DateTime  @default(now())
+
+  @@index([date])
+  @@map("daily_stats")
+}
+
+// جدول جلسات المستخدمين
+model Session {
+  id          String    @id @default(cuid())
+  sessionToken String   @unique
+  userId      String
+  expires     DateTime
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// جدول الإشعارات
+model Notification {
+  id          String    @id @default(cuid())
+  type        NotificationType // نوع الإشعار
+  title       String    // عنوان الإشعار
+  message     String    // رسالة الإشعار
+  isRead      Boolean   @default(false) // هل تم قراءة الإشعار
+  companyId   String?    // معرف الشركة
+  userId      String?   // معرف المستخدم (اختياري)
+  data        Json?     // بيانات إضافية
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // العلاقات
+  company     Company?   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([type])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// جدول سجلات البريد الإلكتروني
+model EmailLog {
+  id           String       @id @default(cuid())
+  to           String
+  subject      String
+  template     String?
+  payload      Json?
+  status       EmailStatus  @default(PENDING)
+  errorMessage String?
+  sentAt       DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([to])
+  @@index([status])
+  @@index([createdAt])
+  @@map("email_logs")
+}
+
+// جدول الإعدادات العامة
+model Setting {
+  id          String    @id @default(cuid())
+  key         String    @unique // مفتاح الإعداد
+  value       String    // قيمة الإعداد
+  type        SettingType @default(STRING) // نوع البيانات
+  description String?   // وصف الإعداد
+  isPublic    Boolean   @default(false) // متاح للعموم
+  updatedAt   DateTime  @updatedAt
+
+  @@index([key])
+  @@map("settings")
+}
+
+// جدول صفحات التصنيف (Ranking Pages) - للأرشفة في محركات البحث
+model RankingPage {
+  id                String    @id @default(cuid())
+  slug              String    @unique // معرف فريد للصفحة مثل: best-restaurants-damascus-syria
+  title             String    // عنوان الصفحة: "أفضل 10 مطاعم في دمشق - سوريا"
+  description       String?   @db.Text // وصف قصير للصفحة
+  content           String?   @db.Text // محتوى إضافي للصفحة
+  
+  // معلومات SEO
+  metaTitle         String?   // عنوان الصفحة في محركات البحث
+  metaDescription   String?   @db.Text // وصف الصفحة في محركات البحث
+  metaKeywords      String[]  // كلمات مفتاحية للصفحة
+  
+  // الفلاتر المطبقة على الصفحة
+  countryId         String?   // معرف البلد
+  cityId            String?   // معرف المدينة
+  subAreaId         String?   // معرف المنطقة الفرعية
+  categoryId        String?   // معرف الفئة
+  subCategoryId     String?   // معرف الفئة الفرعية
+  
+  // إعدادات العرض
+  limit             Int       @default(10) // عدد الشركات المعروضة
+  sortBy            String    @default("rating") // طريقة الترتيب: rating, reviews, newest
+  
+  // الشركات المخصصة
+  customCompanies   String[]  // IDs للشركات المضافة يدوياً
+  excludedCompanies String[]  // IDs للشركات المستبعدة
+  
+  // الإحصائيات
+  viewsCount        Int       @default(0) // عدد المشاهدات
+  clicksCount       Int       @default(0) // عدد النقرات
+  
+  // الحالة
+  isActive          Boolean   @default(true) // نشطة أم لا
+  isAutoGenerated   Boolean   @default(false) // مولدة تلقائياً أم يدوياً
+  publishedAt       DateTime? // تاريخ النشر
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // العلاقات
+  country           Country?     @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  city              City?        @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  subArea           SubArea?     @relation(fields: [subAreaId], references: [id], onDelete: SetNull)
+  category          Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  subCategory       SubCategory? @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
+  
+  @@index([slug])
+  @@index([isActive])
+  @@index([countryId])
+  @@index([cityId])
+  @@index([categoryId])
+  @@index([subCategoryId])
+  @@index([isAutoGenerated])
+  @@index([publishedAt])
+  @@map("ranking_pages")
+}
+
+// جدول تخصيصات SEO للروابط والكيانات
+model SeoOverride {
+  id              String         @id @default(cuid())
+
+  // تحديد الهدف إما بواسطة نوع وهدف معرف، أو عبر المسار الكامل
+  targetType      SeoTargetType?
+  targetId        String?
+  path            String?        @unique
+
+  // الحقول المعروضة في جوجل
+  title           String?        // meta title المخصص
+  metaDescription String? @db.Text // meta description المخصص
+  noindex         Boolean        @default(false)
+
+  // معلومات التعديل
+  updatedById     String?
+  updatedBy       User?          @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([targetType, targetId])
+  @@map("seo_overrides")
+}
+
+// Enums
+enum NotificationType {
+  REVIEW    // مراجعة جديدة
+  MESSAGE   // رسالة أو رد
+  SYSTEM    // إشعار نظام
+  AWARD     // جائزة أو شهادة
+}
+
+enum AwardType {
+  GOLD
+  SILVER
+  BRONZE
+  CERTIFICATE
+}
+
+enum UserRole {
+  USER          // مستخدم عادي
+  COMPANY_OWNER // مالك شركة
+  ADMIN         // مدير النظام
+  SUPER_ADMIN   // مدير عام
+}
+
+enum OwnerRole {
+  OWNER         // مالك
+  MANAGER       // مدير
+  EDITOR        // محرر
+}
+
+enum RequestStatus {
+  PENDING       // في الانتظار
+  APPROVED      // معتمد
+  REJECTED      // مرفوض
+  NEEDS_INFO    // يحتاج معلومات إضافية
+}
+
+enum SettingType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+enum ReportReason {
+  SPAM
+  INAPPROPRIATE_LANGUAGE
+  FAKE_REVIEW
+  HARASSMENT
+  COPYRIGHT_VIOLATION
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+// أنواع الصفحات/الكيانات التي يمكن تخصيصها
+enum SeoTargetType {
+  COMPANY
+  CATEGORY
+  SUBCATEGORY
+  COUNTRY
+  CITY
+  SUBAREA
+  RANKING_PAGE
+  CUSTOM_PATH
+}
