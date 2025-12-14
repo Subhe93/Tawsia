@@ -8,7 +8,7 @@ export interface SiteStats {
 }
 
 export function generateHomePageMetadata(stats: SiteStats): Metadata {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com";
 
   return {
     title: "توصية - دليل الشركات والخدمات في الوطن العربي",
@@ -48,7 +48,7 @@ export function generateHomePageMetadata(stats: SiteStats): Metadata {
       title: "توصية - دليل الشركات والخدمات",
       description: `دليل شامل لـ ${stats.companiesCount} شركة في ${stats.countriesCount} دول عربية`,
       images: [`${baseUrl}/twitter-image.jpg`],
-      site: "@murabaat",
+      site: "@twsia",
     },
 
     alternates: {
@@ -85,13 +85,13 @@ export function generateHomePageMetadata(stats: SiteStats): Metadata {
 }
 
 export function generateJsonLd(stats: SiteStats) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com";
 
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "توصية",
-    alternateName: "murabaat",
+    alternateName: "twsia",
     description: "دليل الشركات والخدمات في الوطن العربي",
     url: baseUrl,
     potentialAction: {
@@ -146,7 +146,7 @@ export function generateCategoryMetadata(
   categorySlug: string,
   companiesCount: number
 ): Metadata {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com";
 
   return {
     title: `${categoryName} | دليل الشركات والخدمات`,

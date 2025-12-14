@@ -10,9 +10,9 @@ export const metadata: Metadata = {
   title: 'توصية | دليل الشركات والخدمات',
   description: 'دليل شامل للشركات والخدمات العربية والعالمية. اكتشف الشركات والخدمات في جميع أنحاء العالم',
   icons: {
-    icon: '/img/tawsia-logo.png',
-    shortcut: '/img/tawsia-logo.png',
-    apple: '/img/tawsia-logo.png',
+    icon: '/img/twsia-logo.png',
+    shortcut: '/img/twsia-logo.png',
+    apple: '/img/twsia-logo.png',
   },
 };
 

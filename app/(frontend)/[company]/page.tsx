@@ -84,7 +84,7 @@ export async function generateMetadata(
       };
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://tawsia.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const companyUrl = `${baseUrl}/${company.slug}`;
 
     const titleParts = [
@@ -236,7 +236,7 @@ export default async function CompanyPage({
       actualReviews: company.reviews.length,
       approvedReviews: company.reviews.filter(r => r.isApproved).length
     });
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://tawsia.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
 
     // Generate dynamic schemas based on company type
     const companySchema = generateCompanySchema(company, baseUrl);

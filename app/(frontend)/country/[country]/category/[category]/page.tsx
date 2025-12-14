@@ -42,7 +42,7 @@ export async function generateMetadata({
       };
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://murabaat.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const categoryUrl = `${baseUrl}/country/${params.country}/category/${params.category}`;
     const countryName = country?.name || params.country.toUpperCase();
 
@@ -127,7 +127,7 @@ export default async function CategoryPage({ params, searchParams = {} }: Catego
     });
 
     // Generate schemas for the category page
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://murabaat.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const itemListSchema = companiesResult.data && companiesResult.data.length > 0 ? generateItemListSchema(
       companiesResult.data,
       baseUrl,

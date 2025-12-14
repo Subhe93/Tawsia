@@ -11,7 +11,7 @@ const envPath = path.join(process.cwd(), ".env");
 if (!fs.existsSync(envPath)) {
   console.log("📝 إنشاء ملف .env...");
   const envContent = `# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/tawsia_db?schema=public"
+DATABASE_URL="postgresql://username:password@localhost:5432/twsia_db?schema=public"
 
 # NextAuth.js
 NEXTAUTH_SECRET="your-secret-key-here"
@@ -20,7 +20,7 @@ NEXTAUTH_URL="http://localhost:3000"
 # App Settings
 APP_NAME="توصية"
 APP_URL="http://localhost:3000"
-ADMIN_EMAIL="admin@tawsia.com"
+ADMIN_EMAIL="admin@twsia.com"
 `;
 
   fs.writeFileSync(envPath, envContent);

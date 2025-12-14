@@ -114,7 +114,7 @@ export default async function GlobalSubcategoryPage({ params, searchParams = {} 
     });
 
     // Generate schemas for the subcategory page
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://murabaat.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const itemListSchema = companiesResult.data && companiesResult.data.length > 0 ? generateItemListSchema(
       companiesResult.data,
       baseUrl,

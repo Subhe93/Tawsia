@@ -22,7 +22,7 @@ async function createAdminUser() {
 
     const admin = await prisma.user.create({
       data: {
-        email: "admin@tawsia.com",
+        email: "admin@twsia.com",
         name: "مدير النظام",
         password: hashedPassword,
         role: "SUPER_ADMIN",
@@ -32,7 +32,7 @@ async function createAdminUser() {
     });
 
     console.log("✅ تم إنشاء مستخدم إداري جديد:");
-    console.log("البريد الإلكتروني: admin@tawsia.com");
+    console.log("البريد الإلكتروني: admin@twsia.com");
     console.log("كلمة المرور: admin123");
     console.log("الدور: SUPER_ADMIN");
   } catch (error) {

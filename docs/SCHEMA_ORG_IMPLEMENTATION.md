@@ -1,6 +1,6 @@
 # Schema.org Implementation Guide
 
-This document explains the comprehensive Schema.org structured data implementation for the Murabaat business directory platform.
+This document explains the comprehensive Schema.org structured data implementation for the twsia business directory platform.
 
 ## Overview
 

@@ -172,7 +172,7 @@ export default function RankingPageContent({ rankingPage }: RankingPageProps) {
   );
 
   // Generate schemas
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com";
   const itemListSchema =
     companies.length > 0
       ? generateItemListSchema(

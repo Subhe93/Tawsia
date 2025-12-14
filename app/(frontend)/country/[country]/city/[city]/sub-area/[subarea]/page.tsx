@@ -42,7 +42,7 @@ export async function generateMetadata({
       };
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://murabaat.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const subAreaUrl = `${baseUrl}/country/${params.country}/city/${params.city}/sub-area/${params.subarea}`;
     const countryName = country?.name || params.country.toUpperCase();
     const cityName = city?.name || params.city;
@@ -131,7 +131,7 @@ export default async function SubAreaPage({ params, searchParams = {} }: SubArea
     });
 
     // Generate schemas for the subarea page
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://murabaat.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const itemListSchema = companiesResult.data && companiesResult.data.length > 0 ? generateItemListSchema(
       companiesResult.data,
       baseUrl,

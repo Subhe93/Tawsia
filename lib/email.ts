@@ -28,7 +28,7 @@ export async function sendEmailAndLog(params: SendEmailParams) {
     const secure = port === 465;
     const user = process.env.EMAIL_SERVER_USER;
     const pass = process.env.EMAIL_SERVER_PASSWORD;
-    const from = process.env.EMAIL_FROM || "no-reply@tawsia.app";
+    const from = process.env.EMAIL_FROM || "no-reply@twsia.app";
 
     const transporter = nodemailer.createTransport({
       host,

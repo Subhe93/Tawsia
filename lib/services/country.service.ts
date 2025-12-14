@@ -432,7 +432,7 @@ export const generateCountryMetadata = async (countryCode: string) => {
     };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com";
 
   return {
     title: `${country.name} | دليل الشركات والخدمات | توصية`,

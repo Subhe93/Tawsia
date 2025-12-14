@@ -281,15 +281,15 @@ export function generateOrganizationSchema(baseUrl: string) {
     logo: `${baseUrl}/logo.png`,
     description: "دليل شامل للشركات والخدمات في الشرق الأوسط",
     sameAs: [
-      "https://www.facebook.com/tawsia",
-      "https://twitter.com/tawsia",
-      "https://instagram.com/tawsia/",
-      "https://www.linkedin.com/company/tawsia",
+      "https://www.facebook.com/twsia",
+      "https://twitter.com/twsia",
+      "https://instagram.com/twsia/",
+      "https://www.linkedin.com/company/twsia",
     ],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
-      email: "info@tawsia.com",
+      email: "info@twsia.com",
     },
   };
 }

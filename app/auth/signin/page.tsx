@@ -87,7 +87,7 @@ export default function SignInPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@tawsia.com"
+                  placeholder="admin@twsia.com"
                   required
                   className="text-right"
                 />
@@ -162,7 +162,7 @@ export default function SignInPage() {
             {/* <div className="mt-6 p-4 bg-gray-50 rounded-lg">
               <h4 className="text-sm font-medium text-gray-900 mb-2">بيانات تجريبية للاختبار:</h4>
               <div className="text-xs text-gray-600 space-y-1">
-                <p><strong>مدير النظام:</strong> admin@tawsia.com</p>
+                <p><strong>مدير النظام:</strong> admin@twsia.com</p>
                 <p><strong>كلمة المرور:</strong> admin123</p>
               </div>
             </div> */}

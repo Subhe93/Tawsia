@@ -44,7 +44,7 @@ export async function generateMetadata({
       };
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://murabaat.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const subcategoryUrl = `${baseUrl}/country/${params.country}/city/${params.city}/category/${params.category}/${params.subcategory}`;
     const countryName = country?.name || params.country.toUpperCase();
     const cityName = city?.name || params.city;
@@ -116,7 +116,7 @@ export default async function CitySubcategoryPage({ params, searchParams = {} }:
 
     const companiesResult = await getCompanies(filters);
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://murabaat.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const itemListSchema = companiesResult.data && companiesResult.data.length > 0 ? generateItemListSchema(
       companiesResult.data,
       baseUrl,

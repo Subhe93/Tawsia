@@ -47,7 +47,7 @@ function escapeXML(str: string): string {
 
 export async function GET(request: NextRequest) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com";
 
     // الصفحات الثابتة
     const staticPages = [
@@ -253,7 +253,7 @@ export async function GET(request: NextRequest) {
     console.error("خطأ في توليد sitemap:", error);
 
     // في حالة الخطأ، نعيد الصفحات الثابتة فقط
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com";
     const staticPages = [
       {
         url: baseUrl,

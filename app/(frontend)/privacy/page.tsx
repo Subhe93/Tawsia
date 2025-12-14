@@ -131,7 +131,7 @@ export default function PrivacyPolicy() {
           </p>
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
             <ul className="space-y-2">
-              <li><strong>البريد الإلكتروني:</strong> privacy@tawsia.com</li>
+              <li><strong>البريد الإلكتروني:</strong> privacy@twsia.com</li>
               <li><strong>الهاتف:</strong> +963 11 1234567</li>
               <li><strong>العنوان:</strong> دمشق، سوريا</li>
             </ul>

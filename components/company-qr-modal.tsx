@@ -18,7 +18,7 @@ export function CompanyQRModal({ companyName, companySlug, isOpen, onClose }: Co
   
   if (!isOpen) return null;
 
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://murabaat.com';
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://twsia.com';
   const reviewUrl = `${baseUrl}/${companySlug}/add-review`;
 
   const handleCopyLink = async () => {

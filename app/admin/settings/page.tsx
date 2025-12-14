@@ -67,7 +67,7 @@ export default function AdminSettingsPage() {
         { key: 'auto_approve_reviews', value: 'false', type: 'BOOLEAN', description: 'الموافقة التلقائية على المراجعات' },
         { key: 'require_email_verification', value: 'true', type: 'BOOLEAN', description: 'تطلب تأكيد البريد الإلكتروني' },
         { key: 'enable_company_registration', value: 'true', type: 'BOOLEAN', description: 'تفعيل تسجيل الشركات' },
-        { key: 'contact_email', value: 'info@tawsia.com', type: 'STRING', description: 'بريد التواصل' },
+        { key: 'contact_email', value: 'info@twsia.com', type: 'STRING', description: 'بريد التواصل' },
       ]
       setSettings(defaultSettings)
     } catch (error) {

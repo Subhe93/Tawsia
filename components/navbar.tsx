@@ -149,7 +149,7 @@ export function Navbar() {
             <Link href="/" className="flex items-center space-x-3 space-x-reverse">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center">
                 {/* <span className="text-white font-bold text-sm">دش</span> */}
-                <img src="/img/tawsia-logo.png" alt="Logo" className="w-6 h-6 object-contain" />
+                <img src="/img/twsia-logo.png" alt="Logo" className="w-6 h-6 object-contain" />
               </div>
               <span className="text-xl font-bold text-gray-900 dark:text-white">توصية</span>
             </Link>

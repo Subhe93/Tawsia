@@ -111,7 +111,7 @@ export default async function GlobalCategoryPage({ params, searchParams = {} }: 
     });
 
     // Generate schemas for the category page
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://tawsia.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const itemListSchema = companiesResult.data && companiesResult.data.length > 0 ? generateItemListSchema(
       companiesResult.data,
       baseUrl,

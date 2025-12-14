@@ -290,7 +290,7 @@ export const mockCompanies: Partial<CompanyWithRelations>[] = [
  * Test function to demonstrate schema generation for different business types
  */
 export function testSchemaGeneration() {
-  const baseUrl = "https://murabaat.com";
+  const baseUrl = "https://twsia.com";
 
   console.log("=== Schema Generation Test Results ===\n");
 

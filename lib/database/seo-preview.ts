@@ -19,7 +19,7 @@ export async function getLiveSeoForTarget(
   type: SeoTargetTypeLocal,
   id: string
 ): Promise<{ title: string; description: string; url: string } | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com";
 
   try {
     switch (type) {
@@ -296,7 +296,7 @@ export async function getLiveSeoForCityCategory(
     );
 
     const url = `${
-      process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com"
+      process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com"
     }/country/${city.countryCode}/city/${city.slug}/category/${category.slug}`;
     return {
       title: overridden.title,
@@ -346,7 +346,7 @@ export async function getLiveSeoForSubAreaCategory(
     );
 
     const url = `${
-      process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com"
+      process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com"
     }/country/${subArea.city?.countryCode}/city/${
       subArea.city?.slug
     }/sub-area/${subArea.slug}/category/${category.slug}`;
@@ -399,7 +399,7 @@ export async function getLiveSeoForSubAreaSubcategory(
     );
 
     const url = `${
-      process.env.NEXT_PUBLIC_BASE_URL || "https://murabaat.com"
+      process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com"
     }/country/${subArea.city?.countryCode}/city/${
       subArea.city?.slug
     }/sub-area/${subArea.slug}/category/${subcategory.category.slug}/${
