@@ -309,6 +309,19 @@ export default function AdminSettingsPage() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
+            
+            <Button variant="outline" className="h-20 flex items-center justify-between p-4" asChild>
+              <Link href="/admin/settings/slug-migration">
+                <div className="flex items-center space-x-3 space-x-reverse">
+                  <ArrowRight className="h-6 w-6 text-orange-600 rotate-180" />
+                  <div className="text-right">
+                    <p className="font-medium">ترحيل Slugs الشركات</p>
+                    <p className="text-sm text-gray-500">تحديث روابط الشركات من ملف CSV</p>
+                  </div>
+                </div>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
