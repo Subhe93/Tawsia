@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import { updateSubAreaInSitemap } from '@/lib/sitemap/auto-updater';
 
 // Schema للتحقق من صحة البيانات
 const createSubAreaSchema = z.object({
@@ -20,7 +21,7 @@ const updateSubAreaSchema = createSubAreaSchema.partial();
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user || (session.user.role !== 'SUPER_ADMIN' && session.user.role !== 'ADMIN')) {
       return NextResponse.json({ error: 'غير مصرح لك بالوصول' }, { status: 401 });
     }
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user || (session.user.role !== 'SUPER_ADMIN' && session.user.role !== 'ADMIN')) {
       return NextResponse.json({ error: 'غير مصرح لك بالوصول' }, { status: 401 });
     }
@@ -101,13 +102,13 @@ export async function POST(request: NextRequest) {
     // التحقق من وجود المدينة والبلد
     const [city, country] = await Promise.all([
       prisma.city.findUnique({ where: { id: validatedData.cityId } }),
-      prisma.country.findFirst({ 
-        where: { 
+      prisma.country.findFirst({
+        where: {
           OR: [
             { id: validatedData.countryId },
             { code: validatedData.countryId }
           ]
-        } 
+        }
       }),
     ]);
 
@@ -165,6 +166,9 @@ export async function POST(request: NextRequest) {
         country: true,
       },
     });
+
+    // تحديث السايت ماب
+    await updateSubAreaInSitemap(subArea.id);
 
     return NextResponse.json(subArea, { status: 201 });
   } catch (error) {

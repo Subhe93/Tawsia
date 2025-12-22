@@ -24,7 +24,8 @@ import {
   RefreshCw,
   TrendingUp,
   Zap,
-  Search as SearchIcon
+  Search as SearchIcon,
+  Map
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -88,6 +89,12 @@ const getNavigation = (stats: DashboardStats) => [
       { name: 'إدارة العناوين والوصف', href: '/admin/seo', icon: Eye },
       // { name: 'استكشاف الروابط', href: '/admin/seo/explore', icon: SearchIcon },
     ]
+  },
+  {
+    name: 'إدارة السايت ماب',
+    href: '/admin/sitemap-manager',
+    icon: Map,
+    current: false,
   },
   {
     name: 'الجوائز والشهادات',

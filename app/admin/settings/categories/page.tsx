@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { 
-  Plus, 
-  Search, 
-  Edit, 
+import {
+  Plus,
+  Search,
+  Edit,
   Trash2,
   Tag,
   Building2,
@@ -120,13 +120,13 @@ export default function AdminCategoriesPage() {
           description: errorDescription,
           duration: 4000,
         })
-        
+
         throw new Error('فشل في جلب الفئات')
       }
 
       const data = await response.json()
       setCategories(data.categories)
-      
+
       // إشعار نجاح (فقط عند التحميل الأولي)
       if (!search) {
         toast.success('تم تحميل الفئات بنجاح', {
@@ -188,11 +188,11 @@ export default function AdminCategoriesPage() {
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true)
-      
-      const url = editingCategory 
+
+      const url = editingCategory
         ? `/api/admin/categories/${editingCategory.id}`
         : '/api/admin/categories'
-      
+
       const method = editingCategory ? 'PATCH' : 'POST'
       const action = editingCategory ? 'تحديث' : 'إضافة'
 
@@ -206,10 +206,10 @@ export default function AdminCategoriesPage() {
 
       if (response.ok) {
         const data = await response.json()
-        
+
         if (editingCategory) {
-          setCategories(prev => 
-            prev.map(cat => 
+          setCategories(prev =>
+            prev.map(cat =>
               cat.id === editingCategory.id ? data.category : cat
             )
           )
@@ -222,7 +222,7 @@ export default function AdminCategoriesPage() {
           description: `الفئة "${formData.name}" تم ${action}ها بنجاح وهي الآن ${formData.isActive ? 'نشطة' : 'غير نشطة'}.`,
           duration: 4000,
         })
-        
+
         setIsDialogOpen(false)
         resetForm()
       } else {
@@ -259,7 +259,7 @@ export default function AdminCategoriesPage() {
     } catch (error) {
       console.error('خطأ في حفظ الفئة:', error)
       const action = editingCategory ? 'تحديث' : 'إضافة'
-      
+
       toast.error(`خطأ في ${action} الفئة`, {
         description: 'تعذر الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.',
         duration: 5000,
@@ -272,14 +272,14 @@ export default function AdminCategoriesPage() {
   const handleDelete = async (categoryId: string) => {
     try {
       const category = categories.find(c => c.id === categoryId)
-      
+
       const response = await fetch(`/api/admin/categories/${categoryId}`, {
         method: 'DELETE'
       })
 
       if (response.ok) {
         setCategories(prev => prev.filter(cat => cat.id !== categoryId))
-        
+
         toast.success('تم حذف الفئة بنجاح', {
           description: `الفئة "${category?.name || 'غير معروف'}" تم حذفها نهائياً من النظام.`,
           duration: 4000,
@@ -333,8 +333,8 @@ export default function AdminCategoriesPage() {
       })
 
       if (response.ok) {
-        setCategories(prev => 
-          prev.map(cat => 
+        setCategories(prev =>
+          prev.map(cat =>
             cat.id === categoryId ? { ...cat, isActive } : cat
           )
         )
@@ -353,7 +353,7 @@ export default function AdminCategoriesPage() {
     } catch (error) {
       console.error('خطأ في تحديث حالة الفئة:', error)
       const statusText = isActive ? 'تفعيل' : 'إلغاء تفعيل'
-      
+
       toast.error(`خطأ في ${statusText} الفئة`, {
         description: 'تعذر الاتصال بالخادم. يرجى المحاولة مرة أخرى.',
         duration: 4000,
@@ -363,8 +363,8 @@ export default function AdminCategoriesPage() {
 
   const generateSlug = (name: string) => {
     return name.toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w\-]+/g, '')
+      .replace(/[^a-z0-9]+/g, '-') // استبدال أي شيء غير إنجليزي أو أرقام بـ -
+      .replace(/^-+|-+$/g, '') // إزالة - من البداية والنهاية
   }
 
   if (status === 'loading') {
@@ -483,7 +483,7 @@ export default function AdminCategoriesPage() {
                             checked={category.isActive}
                             onCheckedChange={(checked) => handleToggleActive(category.id, checked)}
                           />
-                          <Badge 
+                          <Badge
                             variant={category.isActive ? 'default' : 'secondary'}
                             className={category.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
                           >
@@ -493,24 +493,24 @@ export default function AdminCategoriesPage() {
                       </TableCell>
                       <TableCell>
                         <div className="text-sm text-gray-600">
-                          {new Date(category.createdAt).toLocaleDateString( )}
+                          {new Date(category.createdAt).toLocaleDateString()}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2 space-x-reverse">
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="sm"
                             onClick={() => openEditDialog(category)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          
+
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
+                              <Button
+                                variant="ghost"
+                                size="sm"
                                 className="text-red-600 hover:text-red-700"
                                 disabled={category.companiesCount > 0}
                               >
@@ -578,7 +578,7 @@ export default function AdminCategoriesPage() {
               {editingCategory ? 'تعديل معلومات الفئة' : 'إضافة فئة جديدة للشركات'}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
@@ -604,7 +604,10 @@ export default function AdminCategoriesPage() {
               <Input
                 placeholder="restaurants, hotels, medical-services"
                 value={formData.slug}
-                onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                onChange={(e) => {
+                  const val = e.target.value.toLowerCase().replace(/[^a-z0-9\-]/g, '');
+                  setFormData(prev => ({ ...prev, slug: val }));
+                }}
               />
             </div>
 
@@ -643,15 +646,15 @@ export default function AdminCategoriesPage() {
           </div>
 
           <DialogFooter>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setIsDialogOpen(false)}
               disabled={isSubmitting}
             >
               <X className="h-4 w-4 ml-2" />
               إلغاء
             </Button>
-            <Button 
+            <Button
               onClick={handleSubmit}
               disabled={!formData.name || !formData.slug || isSubmitting}
             >

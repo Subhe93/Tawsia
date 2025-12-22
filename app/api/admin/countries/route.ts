@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
+import { updateCountryInSitemap } from '@/lib/sitemap/auto-updater'
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
-    
+
     if (!session?.user || (session.user.role !== 'SUPER_ADMIN' && session.user.role !== 'ADMIN')) {
       return NextResponse.json({ error: 'غير مصرح لك بالوصول' }, { status: 401 })
     }
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
-    
+
     if (!session?.user || (session.user.role !== 'SUPER_ADMIN' && session.user.role !== 'ADMIN')) {
       return NextResponse.json({ error: 'غير مصرح لك بالوصول' }, { status: 401 })
     }
@@ -112,6 +113,9 @@ export async function POST(request: NextRequest) {
       createdAt: country.createdAt.toISOString()
     }
 
+    // تحديث السايت ماب
+    await updateCountryInSitemap(country.id);
+
     return NextResponse.json({
       message: 'تم إنشاء البلد بنجاح',
       country: formattedCountry
@@ -119,14 +123,14 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error('خطأ في إنشاء البلد:', error)
-    
+
     if (error.code === 'P2002') {
       return NextResponse.json(
         { error: 'يوجد بلد بنفس هذا الكود مسبقاً' },
         { status: 400 }
       )
     }
-    
+
     return NextResponse.json(
       { error: 'حدث خطأ في الخادم' },
       { status: 500 }

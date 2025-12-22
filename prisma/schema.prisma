@@ -28,6 +28,7 @@ model Country {
   companies       Company[]
   subAreas        SubArea[]
   rankingPages    RankingPage[]
+  sitemapEntries  SitemapEntry[]
 
   @@map("countries")
 }
@@ -51,6 +52,7 @@ model City {
   companies       Company[]
   subAreas        SubArea[]
   rankingPages    RankingPage[]
+  sitemapEntries  SitemapEntry[]
 
   @@index([countryCode])
   @@index([slug])
@@ -78,6 +80,7 @@ model SubArea {
   country         Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
   companies       Company[]
   rankingPages    RankingPage[]
+  sitemapEntries  SitemapEntry[]
 
   @@index([cityCode])
   @@index([countryCode])
@@ -101,6 +104,7 @@ model Category {
   companies       Company[]
   subCategories   SubCategory[]
   rankingPages    RankingPage[]
+  sitemapEntries  SitemapEntry[]
 
   @@index([slug])
   @@map("categories")
@@ -125,6 +129,7 @@ model SubCategory {
   // Relation to companies
   companies       Company[]
   rankingPages    RankingPage[]
+  sitemapEntries  SitemapEntry[]
 
   @@index([slug])
   @@index([categoryId])
@@ -190,6 +195,7 @@ model Company {
   awards            Award[]
   owners            CompanyOwner[]
   notifications     Notification[]
+  sitemapEntries    SitemapEntry[]
 
   @@index([countryId])
   @@index([cityId])
@@ -732,4 +738,207 @@ enum SeoTargetType {
   SUBAREA
   RANKING_PAGE
   CUSTOM_PATH
+}
+
+// ============================================
+// جداول إدارة السايت ماب (Sitemap Management)
+// ============================================
+
+// جدول إدخالات السايت ماب - الجدول الرئيسي
+model SitemapEntry {
+  id              String    @id @default(cuid())
+  
+  // نوع الصفحة
+  entryType       SitemapEntryType
+  
+  // معرفات الكيانات (حسب النوع)
+  companyId       String?   
+  countryId       String?   
+  cityId          String?   
+  subAreaId       String?   
+  categoryId      String?   
+  subCategoryId   String?   
+  
+  // معلومات الـ URL
+  slug            String    
+  url             String    @unique
+  priority        Float     @default(0.8)
+  changeFrequency String    @default("monthly") // daily, weekly, monthly, yearly
+  
+  // معلومات التقسيم
+  sitemapFile     String    // اسم الملف (بدون .xml): companies-1, static, locations
+  fileIndex       Int?      // رقم الملف (للشركات فقط): 1, 2, 3, 4
+  positionInFile  Int       // الترتيب داخل الملف
+  
+  // معلومات الإضافة
+  addedAt         DateTime  @default(now())
+  addedBy         String?   // معرف الأدمن الذي أضافها
+  batchNumber     Int?      // رقم الدفعة (للشركات)
+  addMethod       SitemapAddMethod?
+  
+  // حالة الإدخال
+  isActive        Boolean   @default(true)
+  lastModified    DateTime  @default(now())
+  needsUpdate     Boolean   @default(false) // يحتاج إعادة بناء
+  
+  // العلاقات (optional - للربط مع الكيانات)
+  company         Company?      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  country         Country?      @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  city            City?         @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  subArea         SubArea?      @relation(fields: [subAreaId], references: [id], onDelete: Cascade)
+  category        Category?     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subCategory     SubCategory?  @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
+  
+  @@index([entryType])
+  @@index([sitemapFile])
+  @@index([fileIndex])
+  @@index([isActive])
+  @@index([companyId])
+  @@index([addedAt])
+  @@index([batchNumber])
+  @@index([needsUpdate])
+  @@map("sitemap_entries")
+}
+
+// جدول إدارة ملفات السايت ماب
+model SitemapFile {
+  id              String    @id @default(cuid())
+  
+  // معلومات الملف
+  fileName        String    @unique // sitemap-companies-1.xml
+  fileType        SitemapFileType
+  fileIndex       Int?      // رقم الملف (للشركات فقط)
+  
+  // الإحصائيات
+  urlsCount       Int       @default(0) // عدد الروابط الحالي
+  maxCapacity     Int       @default(10000) // السعة القصوى
+  isFull          Boolean   @default(false) // ممتلئ؟
+  fileSize        BigInt    @default(0) // حجم الملف بالبايت
+  
+  // التحديثات
+  lastGenerated   DateTime  @default(now())
+  needsRebuild    Boolean   @default(false)
+  generationTime  Int       @default(0) // ميلي ثانية
+  
+  // الحالة
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([fileType])
+  @@index([fileIndex])
+  @@index([isFull])
+  @@index([needsRebuild])
+  @@map("sitemap_files")
+}
+
+// جدول تتبع دفعات إضافة الشركات
+model SitemapBatch {
+  id              String      @id @default(cuid())
+  batchNumber     Int         @unique @default(autoincrement())
+  
+  // معلومات الدفعة
+  companiesCount  Int         // عدد الشركات
+  method          SitemapAddMethod
+  methodParams    Json?       // البارامترات: {fromId, toId, categoryId, etc}
+  filters         Json?       // الفلاتر المطبقة: {isVerified, minRating, etc}
+  
+  // معلومات التقسيم
+  affectedFiles   String[]    // الملفات المتأثرة: ["companies-1", "companies-2"]
+  distributionMap Json?       // توزيع الشركات: {"companies-1": 50, "companies-2": 50}
+  
+  // معلومات المستخدم
+  addedBy         String      // ID الأدمن
+  addedByName     String      // اسم الأدمن للعرض
+  
+  // الحالة
+  status          SitemapBatchStatus @default(COMPLETED)
+  notes           String?     // ملاحظات إضافية
+  
+  // التواريخ
+  createdAt       DateTime    @default(now())
+  completedAt     DateTime?
+  
+  @@index([batchNumber])
+  @@index([status])
+  @@index([createdAt])
+  @@map("sitemap_batches")
+}
+
+// جدول إعدادات السايت ماب
+model SitemapConfig {
+  id                    String   @id @default(cuid())
+  
+  // إعدادات التقسيم
+  companiesPerFile      Int      @default(10000) // شركات لكل ملف
+  maxFilesCount         Int      @default(50) // أقصى عدد ملفات
+  
+  // إعدادات الأداء
+  enableCompression     Boolean  @default(true) // gzip
+  enableCaching         Boolean  @default(true)
+  cacheTimeout          Int      @default(3600) // ثانية
+  
+  // إعدادات التحديث
+  autoRebuild           Boolean  @default(false)
+  rebuildSchedule       String?  // cron expression: "0 2 * * *"
+  
+  // الإحصائيات
+  totalUrls             Int      @default(0)
+  totalFiles            Int      @default(0)
+  lastFullRebuild       DateTime?
+  
+  updatedAt             DateTime @updatedAt
+  
+  @@map("sitemap_config")
+}
+
+// Enums للسايت ماب
+
+// أنواع الصفحات في السايت ماب
+enum SitemapEntryType {
+  STATIC                // الصفحات الثابتة (home, about, search, etc)
+  COMPANY               // صفحة الشركة: /company-slug
+  COUNTRY               // صفحة الدولة: /country/sy
+  CITY                  // صفحة المدينة: /country/sy/city/damascus
+  SUBAREA               // صفحة المنطقة: /country/sy/city/damascus/sub-area/mezzeh
+  CATEGORY              // فئة مستقلة: /category/hotels
+  CATEGORY_SUB          // فئة فرعية مستقلة: /category/hotels/luxury
+  COUNTRY_CATEGORY      // دولة + فئة: /country/sy/category/hotels
+  COUNTRY_CATEGORY_SUB  // دولة + فئة + فرعية: /country/sy/category/hotels/luxury
+  CITY_CATEGORY         // مدينة + فئة: /country/sy/city/damascus/category/hotels
+  CITY_CATEGORY_SUB     // مدينة + فئة + فرعية: /country/sy/city/damascus/category/hotels/luxury
+  SUBAREA_CATEGORY      // منطقة + فئة: /country/sy/city/damascus/sub-area/mezzeh/category/hotels
+  SUBAREA_CATEGORY_SUB  // منطقة + فئة + فرعية: /country/sy/city/damascus/sub-area/mezzeh/category/hotels/luxury
+}
+
+// أنواع ملفات السايت ماب
+enum SitemapFileType {
+  INDEX             // الملف الرئيسي (sitemap.xml)
+  STATIC            // الصفحات الثابتة
+  COMPANIES         // ملفات الشركات المقسمة
+  LOCATIONS         // الدول والمدن والمناطق
+  CATEGORIES_SIMPLE // الفئات المستقلة
+  CATEGORIES_MIXED  // الفئات المختلطة مع المواقع
+}
+
+// طرق إضافة الشركات
+enum SitemapAddMethod {
+  BY_ID_RANGE       // من ID إلى ID
+  TOP_RATED         // الأفضل تقييماً
+  NEWEST_FIRST      // الأحدث أولاً
+  OLDEST_FIRST      // الأقدم أولاً
+  BY_CATEGORY       // حسب الفئة
+  BY_CITY           // حسب المدينة
+  RANDOM            // عشوائي
+  MANUAL            // يدوي (اختيار محدد)
+  AUTO_GENERATED    // مولد تلقائياً
+}
+
+// حالة دفعة الإضافة
+enum SitemapBatchStatus {
+  PENDING           // في الانتظار
+  PROCESSING        // جاري المعالجة
+  COMPLETED         // مكتمل
+  FAILED            // فشل
+  ROLLED_BACK       // تم التراجع
 }

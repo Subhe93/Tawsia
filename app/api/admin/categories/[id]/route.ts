@@ -9,16 +9,23 @@ export async function PATCH(
 ) {
   try {
     const session = await getServerSession(authOptions)
-    
+
     if (!session?.user || (session.user.role !== 'SUPER_ADMIN' && session.user.role !== 'ADMIN')) {
       return NextResponse.json({ error: 'غير مصرح لك بالوصول' }, { status: 401 })
     }
 
     const categoryId = params.id
     const body = await request.json()
-    
+
     if (!categoryId) {
       return NextResponse.json({ error: 'معرف الفئة مطلوب' }, { status: 400 })
+    }
+
+    if (body.slug) {
+      const validSlug = /^[a-z0-9\-]+$/.test(body.slug);
+      if (!validSlug) {
+        return NextResponse.json({ error: 'يجب أن يحتوي المعرف على أحرف إنجليزية وأرقام فقط' }, { status: 400 })
+      }
     }
 
     const category = await prisma.category.update({
@@ -64,13 +71,13 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions)
-    
+
     if (!session?.user || (session.user.role !== 'SUPER_ADMIN' && session.user.role !== 'ADMIN')) {
       return NextResponse.json({ error: 'غير مصرح لك بالوصول' }, { status: 401 })
     }
 
     const categoryId = params.id
-    
+
     if (!categoryId) {
       return NextResponse.json({ error: 'معرف الفئة مطلوب' }, { status: 400 })
     }
@@ -81,8 +88,8 @@ export async function DELETE(
     })
 
     if (companiesCount > 0) {
-      return NextResponse.json({ 
-        error: `لا يمكن حذف الفئة لأنها تحتوي على ${companiesCount} شركة` 
+      return NextResponse.json({
+        error: `لا يمكن حذف الفئة لأنها تحتوي على ${companiesCount} شركة`
       }, { status: 400 })
     }
 
