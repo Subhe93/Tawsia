@@ -7,6 +7,8 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getCurrentDistribution } from '@/lib/sitemap/distributor';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     // 1. الإحصائيات العامة
@@ -53,7 +55,7 @@ export async function GET() {
         companiesInSitemap,
         companiesRemaining: totalCompanies - companiesInSitemap,
         totalUrls: totalEntries,
-        
+
         // معلومات الملفات
         totalFiles: files.length,
         filesDetails: files.map((f) => ({
@@ -67,19 +69,19 @@ export async function GET() {
           lastGenerated: f.lastGenerated,
           needsRebuild: f.needsRebuild,
         })),
-        
+
         // آخر دفعة
         lastBatch: lastBatch
           ? {
-              batchNumber: lastBatch.batchNumber,
-              companiesCount: lastBatch.companiesCount,
-              method: lastBatch.method,
-              addedByName: lastBatch.addedByName,
-              createdAt: lastBatch.createdAt,
-              status: lastBatch.status,
-            }
+            batchNumber: lastBatch.batchNumber,
+            companiesCount: lastBatch.companiesCount,
+            method: lastBatch.method,
+            addedByName: lastBatch.addedByName,
+            createdAt: lastBatch.createdAt,
+            status: lastBatch.status,
+          }
           : null,
-        
+
         // توزيع الشركات
         distribution: {
           totalFiles: distribution.totalFiles,
@@ -90,7 +92,7 @@ export async function GET() {
           availableSpace: distribution.availableSpace,
           nextFile: distribution.nextFile,
         },
-        
+
         // معلومات إضافية
         sitemapSize: totalSize,
         lastFullRebuild: config?.lastFullRebuild || null,
