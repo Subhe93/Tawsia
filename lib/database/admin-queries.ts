@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'
 import { DashboardStats } from '@/lib/types/database'
 import { WorkingHoursService } from '@/lib/services/working-hours.service'
 import { createEnglishSlug, createUniqueEnglishSlug } from '@/lib/utils/database-helpers'
+import { updateCompanyInSitemap } from '@/lib/sitemap/auto-updater'
 
 // إحصائيات داشبورد المدير
 export async function getAdminDashboardStats(): Promise<DashboardStats> {
@@ -77,14 +78,14 @@ export async function getAdminDashboardStats(): Promise<DashboardStats> {
   ])
 
   // حساب نسب النمو
-  const companiesGrowth = lastMonthCompanies > 0 
-    ? ((currentMonthCompanies - lastMonthCompanies) / lastMonthCompanies) * 100 
+  const companiesGrowth = lastMonthCompanies > 0
+    ? ((currentMonthCompanies - lastMonthCompanies) / lastMonthCompanies) * 100
     : 0
-  const reviewsGrowth = lastMonthReviews > 0 
-    ? ((currentMonthReviews - lastMonthReviews) / lastMonthReviews) * 100 
+  const reviewsGrowth = lastMonthReviews > 0
+    ? ((currentMonthReviews - lastMonthReviews) / lastMonthReviews) * 100
     : 0
-  const usersGrowth = lastMonthUsers > 0 
-    ? ((currentMonthUsers - lastMonthUsers) / lastMonthUsers) * 100 
+  const usersGrowth = lastMonthUsers > 0
+    ? ((currentMonthUsers - lastMonthUsers) / lastMonthUsers) * 100
     : 0
 
   // أفضل البلدان
@@ -419,8 +420,8 @@ async function updateCompanyRating(companyId: string) {
   })
 
   const totalReviews = reviews.length
-  const averageRating = totalReviews > 0 
-    ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews 
+  const averageRating = totalReviews > 0
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
     : 0
 
   await prisma.company.update({
@@ -465,13 +466,13 @@ export async function getUsersForAdmin(filters: {
   const where: Prisma.UserWhereInput = {
     // فلتر الحالة النشطة
     ...(status && status !== 'all' && { isActive: status === 'active' }),
-    
+
     // البحث في الاسم والإيميل والشركات المملوكة
     ...(search && {
       OR: [
         { name: { contains: search, mode: 'insensitive' } },
         { email: { contains: search, mode: 'insensitive' } },
-        { 
+        {
           ownedCompanies: {
             some: {
               company: {
@@ -482,24 +483,24 @@ export async function getUsersForAdmin(filters: {
         }
       ]
     }),
-    
+
     // فلتر الدور (دعم أدوار متعددة)
     ...(role && role !== 'all' && {
-      role: role.includes(',') 
+      role: role.includes(',')
         ? { in: role.split(',') }
         : role as any
     }),
-    
+
     // فلتر التوثيق
     ...(isVerified && isVerified !== 'all' && { isVerified: isVerified === 'true' }),
-    
+
     // فلتر المستخدمين الذين لديهم شركات
     ...(hasCompanies && hasCompanies !== 'all' && {
-      ownedCompanies: hasCompanies === 'true' 
-        ? { some: {} } 
+      ownedCompanies: hasCompanies === 'true'
+        ? { some: {} }
         : { none: {} }
     }),
-    
+
     // فلتر التاريخ
     ...(dateFrom && {
       createdAt: { gte: new Date(dateFrom) }
@@ -611,17 +612,17 @@ export async function createCompany(data: {
   isFeatured?: boolean
 }) {
   let slug: string;
-  
+
   if (data.slug) {
     // التحقق من أن السلوغ المخصص فريد
     const existingCompany = await prisma.company.findFirst({
       where: { slug: data.slug }
     })
-    
+
     if (existingCompany) {
       throw new Error('هذا السلوغ مستخدم بالفعل')
     }
-    
+
     slug = createEnglishSlug(data.slug)
   } else {
     slug = await createUniqueEnglishSlug('company', data.name)
@@ -629,7 +630,7 @@ export async function createCompany(data: {
 
   const { subCategoryId, subAreaId, ...restOfData } = data;
 
-  return await prisma.company.create({
+  const company = await prisma.company.create({
     data: {
       ...restOfData,
       slug,
@@ -651,6 +652,8 @@ export async function createCompany(data: {
       }
     }
   })
+
+  return company
 }
 
 // تحديث شركة
@@ -686,11 +689,11 @@ export async function updateCompany(companyId: string, data: Partial<{
   if (subCategoryId !== undefined) {
     updateData.subCategoryId = subCategoryId === '' ? null : subCategoryId;
   }
-  
+
   if (subAreaId !== undefined) {
     updateData.subAreaId = subAreaId === '' ? null : subAreaId;
   }
-  
+
   // إذا تم تمرير slug مخصص، استخدمه، وإلا أنشئ واحد من الاسم
   if (data.slug) {
     // التحقق من أن السلوغ المخصص فريد
@@ -700,18 +703,18 @@ export async function updateCompany(companyId: string, data: Partial<{
         id: { not: companyId }
       }
     })
-    
+
     if (existingCompany) {
       throw new Error('هذا السلوغ مستخدم بالفعل')
     }
-    
+
     updateData.slug = createEnglishSlug(data.slug)
   } else if (data.name) {
     updateData.slug = await createUniqueEnglishSlug('company', data.name, companyId)
   }
 
   // استخدام transaction لتحديث الشركة والصور معاً
-  return await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     // تحديث بيانات الشركة
     const updatedCompany = await tx.company.update({
       where: { id: companyId },
@@ -753,6 +756,11 @@ export async function updateCompany(companyId: string, data: Partial<{
 
     return updatedCompany
   })
+
+  // تحديث السايت ماب (Sync URL/Slug)
+  await updateCompanyInSitemap(result.id)
+
+  return result
 }
 
 // الحصول على شركة واحدة للأدمن
@@ -886,14 +894,14 @@ export async function exportCompaniesData(format: 'csv' | 'json' = 'csv') {
   ].join(',')
 
   const csvRows = companies.map(company => [
-    `"${company.name}"`, 
-    `"${company.description || ''}"`, 
-    `"${company.category.name}"`, 
-    `"${company.country.name}"`, 
-    `"${company.city.name}"`, 
-    `"${company.phone || ''}"`, 
-    `"${company.email || ''}"`, 
-    `"${company.website || ''}"`, 
+    `"${company.name}"`,
+    `"${company.description || ''}"`,
+    `"${company.category.name}"`,
+    `"${company.country.name}"`,
+    `"${company.city.name}"`,
+    `"${company.phone || ''}"`,
+    `"${company.email || ''}"`,
+    `"${company.website || ''}"`,
     company.rating,
     company.reviewsCount,
     company.isVerified ? 'نعم' : 'لا',
@@ -1043,9 +1051,9 @@ export async function getAllCategories() {
 // جلب المدن حسب البلد
 export async function getCitiesByCountry(countryId: string) {
   return await prisma.city.findMany({
-    where: { 
+    where: {
       countryId,
-      isActive: true 
+      isActive: true
     },
     include: {
       _count: {
@@ -1083,7 +1091,7 @@ export async function getAdvancedAnalytics() {
       orderBy: { rating: 'desc' },
       take: 10
     }),
-    
+
     // أكثر الشركات مراجعة
     prisma.company.findMany({
       where: { isActive: true },
@@ -1139,15 +1147,15 @@ export async function getAdvancedAnalytics() {
     recentGrowth,
     categoryPerformance: categoryPerformance.map(cat => ({
       ...cat,
-      averageRating: cat.companies.length > 0 
-        ? cat.companies.reduce((sum, comp) => sum + comp.rating, 0) / cat.companies.length 
+      averageRating: cat.companies.length > 0
+        ? cat.companies.reduce((sum, comp) => sum + comp.rating, 0) / cat.companies.length
         : 0,
       totalReviews: cat.companies.reduce((sum, comp) => sum + comp.reviewsCount, 0)
     })),
     countryPerformance: countryPerformance.map(country => ({
       ...country,
-      averageRating: country.companies.length > 0 
-        ? country.companies.reduce((sum, comp) => sum + comp.rating, 0) / country.companies.length 
+      averageRating: country.companies.length > 0
+        ? country.companies.reduce((sum, comp) => sum + comp.rating, 0) / country.companies.length
         : 0,
       totalReviews: country.companies.reduce((sum, comp) => sum + comp.reviewsCount, 0)
     }))

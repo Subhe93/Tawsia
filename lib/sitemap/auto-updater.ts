@@ -210,6 +210,11 @@ export async function updateCategoryInSitemap(categoryId: string) {
 /**
  * تحديث معلومات شركة في السايت ماب
  */
+import { distributeCompanies, updateFileStats } from '@/lib/sitemap/distributor';
+
+/**
+ * تحديث أو إضافة شركة في السايت ماب
+ */
 export async function updateCompanyInSitemap(companyId: string) {
   try {
     const company = await prisma.company.findUnique({
@@ -223,21 +228,25 @@ export async function updateCompanyInSitemap(companyId: string) {
       where: { companyId },
     });
 
-    if (!entry) return; // الشركة ليست في السايت ماب بعد
+    // 1. تحديث شركة موجودة
+    if (entry) {
+      await prisma.sitemapEntry.update({
+        where: { id: entry.id },
+        data: {
+          slug: company.slug,
+          url: `${baseUrl}/${company.slug}`,
+          isActive: company.isActive,
+          lastModified: company.updatedAt,
+        },
+      });
+      await markFileForRebuild(`sitemap-${entry.sitemapFile}.xml`);
+      return;
+    }
 
-    // تحديث آخر تعديل
-    await prisma.sitemapEntry.update({
-      where: { id: entry.id },
-      data: {
-        isActive: company.isActive,
-        lastModified: company.updatedAt,
-      },
-    });
-
-    // تحديث الملف
-    await markFileForRebuild(`sitemap-${entry.sitemapFile}.xml`);
+    // 2. إضافة شركة جديدة (تم إيقافها بناءً على طلب المستخدم)
+    // إذا كنت تريد تفعيل الإضافة التلقائية، يمكنك إلغاء تعليق الأكواد هنا
   } catch (error) {
-    console.error('خطأ في تحديث الشركة:', error);
+    console.error('خطأ في تحديث/إضافة الشركة للسايت ماب:', error);
   }
 }
 
