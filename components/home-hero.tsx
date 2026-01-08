@@ -9,6 +9,7 @@ import { FloatingShapes } from '@/components/floating-shapes';
 import { AnimatedStats } from '@/components/animated-stats';
 import { SearchAnimation } from '@/components/search-animation';
 import { countries, categories } from '@/lib/data';
+import { useCountry } from '@/components/providers/country-provider';
 
 interface Stats {
   totalCountries: number;
@@ -19,9 +20,10 @@ interface Stats {
 
 interface HomeHeroProps {
   stats?: Stats;
+  selectedCountry?: string;
 }
 
-export function HomeHero({ stats }: HomeHeroProps) {
+export function HomeHero({ stats, selectedCountry: initialCountryCode }: HomeHeroProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
@@ -32,8 +34,18 @@ export function HomeHero({ stats }: HomeHeroProps) {
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   
+  const { selectedCountry: contextCountry } = useCountry();
   const countryDropdownRef = useRef<HTMLDivElement>(null);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Sync with context country
+  useEffect(() => {
+    if (contextCountry) {
+      setSelectedCountry(contextCountry.code);
+    } else if (initialCountryCode) {
+      setSelectedCountry(initialCountryCode);
+    }
+  }, [contextCountry, initialCountryCode]);
 
   const filteredCountries = countries.filter(country =>
     country.name.toLowerCase().includes(countrySearch.toLowerCase())
@@ -143,7 +155,7 @@ export function HomeHero({ stats }: HomeHeroProps) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  className="w-full text-black px-6 py-4 text-gray-800 bg-transparent outline-none text-lg focus:placeholder-gray-400 transition-colors"
+                  className="w-full px-6 py-4 text-gray-800 bg-transparent outline-none text-lg focus:placeholder-gray-400 transition-colors"
                 />
               </div>
               

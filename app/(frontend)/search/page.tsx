@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
-import { Suspense } from 'react';
-import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
-import { CompaniesGrid } from '@/components/companies-grid';
+import { SearchClientWrapper } from '@/components/search-client-wrapper';
 import { getCompanies } from '@/lib/database/queries';
+import { prisma } from '@/lib/prisma';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { applySeoOverride } = await import('@/lib/seo/overrides');
@@ -44,6 +43,25 @@ interface SearchPageProps {
   }
 }
 
+async function getAllCountries() {
+  try {
+    const countries = await prisma.country.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        flag: true,
+      },
+      orderBy: { name: 'asc' }
+    });
+    return countries;
+  } catch (error) {
+    console.error('خطأ في جلب الدول:', error);
+    return [];
+  }
+}
+
 async function SearchResults({ searchParams }: { searchParams: SearchPageProps['searchParams'] }) {
   const filters = {
     query: searchParams?.q,
@@ -53,84 +71,29 @@ async function SearchResults({ searchParams }: { searchParams: SearchPageProps['
     category: searchParams?.category,
     subCategory: searchParams?.subCategory,
     rating: searchParams?.rating ? parseFloat(searchParams.rating) : undefined,
-    verified: searchParams?.verified === 'true' ? true : searchParams?.verified === 'false' ? false : undefined,
-    featured: searchParams?.featured === 'true' ? true : undefined,
-    hasWebsite: searchParams?.hasWebsite === 'true' ? true : undefined,
-    hasPhone: searchParams?.hasPhone === 'true' ? true : undefined,
-    hasEmail: searchParams?.hasEmail === 'true' ? true : undefined,
-    hasImages: searchParams?.hasImages === 'true' ? true : undefined,
-    hasWorkingHours: searchParams?.hasWorkingHours === 'true' ? true : undefined,
-    sortBy: (searchParams?.sort as any) || 'rating',
-    page: parseInt(searchParams?.page || '1'),
-    limit: 20
+    verified: searchParams?.verified === 'true',
+    featured: searchParams?.featured === 'true',
   };
 
   const companiesResult = await getCompanies(filters);
 
-  return (
-    <>
-      <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            نتائج البحث
-            {searchParams?.q && (
-              <span className="text-blue-600 dark:text-blue-400"> عن &quot;{searchParams.q}&quot;</span>
-            )}
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            {companiesResult.pagination.total} شركة
-          </p>
-        </div>
-        
-        {companiesResult.pagination.total === 0 && searchParams?.q && (
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4 mt-4">
-            <h3 className="font-medium text-yellow-800 dark:text-yellow-200 mb-2">
-              لم يتم العثور على نتائج
-            </h3>
-            <p className="text-yellow-700 dark:text-yellow-300 text-sm">
-              جرب استخدام كلمات مختلفة أو قم بتوسيع معايير البحث
-            </p>
-          </div>
-        )}
-      </div>
-
-      <CompaniesGrid 
-        companies={companiesResult.data} 
-        pagination={companiesResult.pagination}
-      />
-    </>
-  );
+  return companiesResult;
 }
 
-export default function SearchPage({ searchParams }: SearchPageProps) {
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const allCountries = await getAllCountries();
+  
+  // Only fetch data if country is already in search params
+  // Otherwise, let the client auto-select and trigger the fetch
+  const companiesResult = searchParams?.country 
+    ? await SearchResults({ searchParams })
+    : { data: [], pagination: { page: 1, limit: 12, total: 0, totalPages: 0 } };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-          البحث المتقدم
-        </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400">
-          استخدم الفلاتر المتقدمة للعثور على الشركات والخدمات المناسبة لك
-        </p>
-      </div>
-
-      <AdvancedSearchFilters 
-        showLocationFilter={true}
-        showCategoryFilter={true}
-        showRatingFilter={true}
-        showPriceFilter={true}
-        showHoursFilter={true}
-        initialValues={searchParams}
-      />
-
-      <Suspense fallback={
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="mr-3 text-gray-600 dark:text-gray-400">جارٍ البحث...</span>
-        </div>
-      }>
-        <SearchResults searchParams={searchParams} />
-      </Suspense>
-    </div>
+    <SearchClientWrapper
+      allCountries={allCountries}
+      initialSearchParams={searchParams}
+      companiesResult={companiesResult}
+    />
   );
 }

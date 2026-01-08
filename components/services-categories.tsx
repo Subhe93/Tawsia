@@ -28,6 +28,7 @@ interface ServiceCategoriesProps {
   country?: string;
   city?: string;
   subArea?: string;
+  selectedCountryCode?: string;
 }
 
 // خريطة الأيقونات
@@ -63,14 +64,15 @@ const colorOptions = [
 ];
 
 
-export function ServicesCategories({ categories, country, city, subArea }: ServiceCategoriesProps) {
+export function ServicesCategories({ categories, country, city, subArea, selectedCountryCode }: ServiceCategoriesProps) {
   // استخدام البيانات المرسلة أو البيانات الافتراضية
-  const displayCategories = categories.map((cat, index) => ({
-    ...cat,
-    IconComponent: iconMap[cat.icon || 'briefcase'] || Briefcase,
-    color: colorOptions[index % colorOptions.length],
-    count: cat.companiesCount || 0,
-  }));
+  const displayCategories = categories
+    .map((cat, index) => ({
+      ...cat,
+      IconComponent: iconMap[cat.icon || 'briefcase'] || Briefcase,
+      color: colorOptions[index % colorOptions.length],
+      count: cat.companiesCount || 0,
+    }));
   return (
     <section className="container mx-auto px-4">
       <div className="text-center mb-12">

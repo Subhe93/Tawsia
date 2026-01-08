@@ -1,8 +1,7 @@
 export const dynamic = "force-dynamic";
 import { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
-import { ServicesCategories } from '@/components/services-categories';
-import { Grid3X3 } from 'lucide-react';
+import { ServicesClientWrapper } from '@/components/services-client-wrapper';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { applySeoOverride } = await import('@/lib/seo/overrides');
@@ -53,26 +52,35 @@ async function getCategories() {
   }
 }
 
+async function getAllCountries() {
+  try {
+    const countries = await prisma.country.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        flag: true,
+      },
+      orderBy: { name: 'asc' }
+    });
+    return countries;
+  } catch (error) {
+    console.error('خطأ في جلب الدول:', error);
+    return [];
+  }
+}
+
 export default async function ServicesPage() {
-  const categories = await getCategories();
+  const [categories, allCountries] = await Promise.all([
+    getCategories(),
+    getAllCountries()
+  ]);
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-brand-green to-brand-yellow rounded-2xl p-8 text-white mb-12">
-        <div className="flex items-center space-x-4 space-x-reverse mb-4">
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-            <Grid3X3 className="h-6 w-6" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold">جميع الخدمات والمهن</h1>
-        </div>
-        
-        <p className="text-xl text-white/90 max-w-2xl">
-          اكتشف جميع الخدمات والمهن المتاحة في منطقتك
-        </p>
-      </div>
-      
-      <ServicesCategories categories={categories} />
-    </div>
+    <ServicesClientWrapper 
+      initialCategories={categories}
+      allCountries={allCountries}
+    />
   );
 }

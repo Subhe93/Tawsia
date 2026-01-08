@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Flag emoji styling for better rendering */
+@layer base {
+  .flag-emoji {
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 1.25em;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
 /* Custom styles for subcategories */
 @layer components {
   .subcategory-card {

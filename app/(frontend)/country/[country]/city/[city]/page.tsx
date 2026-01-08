@@ -4,11 +4,12 @@ import { Metadata } from 'next';
 import { applySeoOverride } from '@/lib/seo/overrides'
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getCityBySlug, getCompanies, getCountryByCode, getCategories, getSubAreas } from '@/lib/database/queries';
+import { getCityBySlug, getCompanies, getCategories, getSubAreas } from '@/lib/database/queries';
 import { CompaniesGrid } from '@/components/companies-grid';
 import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
 import { ServicesCategories } from '@/components/services-categories';
 import { SubAreasGrid } from '@/components/sub-area/sub-areas-grid';
+import { CountryAutoSelect } from '@/components/company/country-auto-select';
 import { 
   generateItemListSchema,
   generateOrganizationSchema,
@@ -29,10 +30,7 @@ export async function generateMetadata({
   params: { country: string; city: string } 
 }): Promise<Metadata> {
   try {
-    const [city, country] = await Promise.all([
-      getCityBySlug(params.city, params.country),
-      getCountryByCode(params.country)
-    ]);
+    const city = await getCityBySlug(params.city, params.country);
     
     if (!city) {
       return {
@@ -41,6 +39,7 @@ export async function generateMetadata({
       };
     }
 
+    const country = city.country;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const cityUrl = `${baseUrl}/country/${params.country}/city/${params.city}`;
     const countryName = country?.name || params.country.toUpperCase();
@@ -87,14 +86,14 @@ interface CityPageProps {
 
 export default async function CityPage({ params, searchParams = {} }: CityPageProps) {
   try {
-    const [city, country] = await Promise.all([
-      getCityBySlug(params.city, params.country),
-      getCountryByCode(params.country)
-    ]);
+    const city = await getCityBySlug(params.city, params.country);
 
     if (!city) {
       notFound();
     }
+
+    // Get country from city data
+    const country = city.country;
 
     const [categories, subAreas] = await Promise.all([
       getCategories(),
@@ -171,6 +170,9 @@ export default async function CityPage({ params, searchParams = {} }: CityPagePr
 
     return (
       <>
+        {/* Auto-select country in navbar */}
+        {country && <CountryAutoSelect country={country} />}
+        
         {/* JSON-LD Schema للقائمة */}
         {itemListSchema && (
           <script

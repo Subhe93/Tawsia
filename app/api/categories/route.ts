@@ -1,10 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const activeOnly = searchParams.get('activeOnly') === 'true'
+    const { searchParams } = new URL(request.url);
+    const activeOnly = searchParams.get("activeOnly") === "true";
+    const country = searchParams.get("country");
+
+    // إعداد فلتر الشركات
+    const companiesFilter: any = { isActive: true };
+    if (country) {
+      companiesFilter.city = {
+        country: {
+          code: country,
+        },
+      };
+    }
 
     // جلب الفئات مع حساب عدد الشركات بشكل ديناميكي
     const categories = await prisma.category.findMany({
@@ -18,41 +29,38 @@ export async function GET(request: NextRequest) {
         _count: {
           select: {
             companies: {
-              where: {
-                isActive: true
-              }
-            }
-          }
-        }
+              where: companiesFilter,
+            },
+          },
+        },
       },
       orderBy: {
-        name: 'asc'
-      }
-    })
+        name: "asc",
+      },
+    });
 
     // تحويل البيانات لتتطابق مع الواجهة المطلوبة
-    const formattedCategories = categories.map(category => ({
+    const formattedCategories = categories.map((category) => ({
       id: category.id,
       slug: category.slug,
       name: category.name,
       icon: category.icon,
       description: category.description,
-      companiesCount: category._count.companies
-    }))
+      companiesCount: category._count.companies,
+    }));
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      categories: formattedCategories
-    })
-
+      categories: formattedCategories,
+    });
   } catch (error) {
-    console.error('خطأ في جلب الفئات:', error)
+    console.error("خطأ في جلب الفئات:", error);
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: 'حدث خطأ في الخادم أثناء جلب الفئات' 
+        error: "حدث خطأ في الخادم أثناء جلب الفئات",
       },
       { status: 500 }
-    )
+    );
   }
 }

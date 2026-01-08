@@ -8,6 +8,7 @@ import { CountryHeader } from '@/components/country-header';
 import { CitiesGrid } from '@/components/cities-grid';
 import { CompaniesGrid } from '@/components/companies-grid';
 import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
+import { CountryAutoSelect } from '@/components/company/country-auto-select';
 import { 
   getCountryByCode, 
   getCountryCities, 
@@ -115,6 +116,9 @@ export default async function CountryPage({ params, searchParams = {} }: Country
 
     return (
       <>
+        {/* Auto-select country in navbar */}
+        <CountryAutoSelect country={countryData} />
+        
         {/* JSON-LD Schema */}
         <script
           type="application/ld+json"

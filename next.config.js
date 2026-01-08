@@ -14,6 +14,18 @@ const nextConfig = {
   // تحسين الصور
   images: {
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "flagcdn.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.pexels.com",
+        pathname: "/**",
+      },
+    ],
     // formats: ["image/webp", "image/avif"],
     // domains: [
     //   "images.pexels.com",

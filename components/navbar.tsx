@@ -6,6 +6,9 @@ import { useSession, signOut } from 'next-auth/react';
 import { Search, Menu, X, Moon, Sun, User, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
+import { useCountry } from '@/components/providers/country-provider';
+import { getFlagEmoji } from '@/lib/utils/country-flags';
+import { FlagEmoji } from '@/components/ui/flag-emoji';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -36,6 +39,7 @@ interface Country {
   id: string;
   code: string;
   name: string;
+  flag?: string;
   cities?: City[];
 }
 
@@ -55,6 +59,7 @@ export function Navbar() {
   const [expandedCountries, setExpandedCountries] = useState<string[]>([]);
   const { theme, setTheme } = useTheme();
   const { data: session, status } = useSession();
+  const { selectedCountry, setSelectedCountry } = useCountry();
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev => 
@@ -256,7 +261,14 @@ export function Navbar() {
               {/* قائمة الدول المخصصة */}
               <div className="relative group">
                 <button className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1">
-                  الدول
+                  {selectedCountry ? (
+                    <span className="flex items-center gap-2">
+                      <FlagEmoji countryCode={selectedCountry.code} flag={selectedCountry.flag || undefined} size="lg" />
+                      <span>{selectedCountry.name}</span>
+                    </span>
+                  ) : (
+                    'الدول'
+                  )}
                   <ChevronDown className="h-4 w-4" />
                 </button>
                 
@@ -272,9 +284,11 @@ export function Navbar() {
                             <div className="flex items-center justify-between">
                               <Link 
                                 href={`/country/${country.code}`}
-                                className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex-1"
+                                className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex-1 flex items-center gap-2"
+                                onClick={() => setSelectedCountry(country)}
                               >
-                                {country.name}
+                                <FlagEmoji countryCode={country.code} flag={country.flag || undefined} size="lg" />
+                                <span>{country.name}</span>
                               </Link>
                               {country.cities && country.cities.length > 0 && (
                                 <button
@@ -519,10 +533,14 @@ export function Navbar() {
                       <div key={country.id} className="pr-4">
                         <Link 
                           href={`/country/${country.code}`}
-                          className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium"
-                          onClick={() => setIsMenuOpen(false)}
+                          className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium flex items-center gap-2"
+                          onClick={() => {
+                            setSelectedCountry(country);
+                            setIsMenuOpen(false);
+                          }}
                         >
-                          {country.name}
+                          <FlagEmoji countryCode={country.code} flag={country.flag || undefined} size="lg" />
+                          <span>{country.name}</span>
                         </Link>
                         {country.cities && country.cities.length > 0 && (
                           <div className="pr-4 mt-1 space-y-1">

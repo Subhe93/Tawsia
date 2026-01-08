@@ -1,11 +1,7 @@
 export const dynamic = "force-dynamic";
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { HomeHero } from '@/components/home-hero';
-import { CountriesGrid } from '@/components/countries-grid';
-import { FeaturedCompanies } from '@/components/featured-companies';
-import { LatestReviews } from '@/components/latest-reviews';
-import { ServicesCategories } from '@/components/services-categories';
+import { HomeClientWrapper } from '@/components/home-client-wrapper';
 import { getHomePageData, getSiteStats, getAllCountries } from '@/lib/services/homepage.service';
 import { generateHomePageMetadata, generateJsonLd, type SiteStats } from '@/lib/seo/metadata';
 import { applySeoOverride } from '@/lib/seo/overrides';
@@ -61,27 +57,13 @@ export default async function HomePage() {
           }}
         />
         
-        <div className="space-y-12">
-          <HomeHero stats={{
-            totalCountries: stats.countriesCount,
-            totalCompanies: stats.companiesCount,
-            totalCategories: stats.categoriesCount,
-            totalReviews: stats.reviewsCount
-          }} />
-          <ServicesCategories categories={data.categories} />
-                <div className="text-center mt-12">
-        <Link
-          href="/services"
-          className="inline-flex items-center px-8 py-4 bg-brand-orange hover:bg-orange-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 animate-fade-in-up delay-1200"
-        >
-          عرض جميع الخدمات
-        </Link>
-      </div>
-          <CountriesGrid countries={allCountries} />
-          <FeaturedCompanies companies={data.featuredCompanies} />
-          <LatestReviews reviews={data.latestReviews} />
-          <br></br>
-        </div>
+        <HomeClientWrapper
+          allCountries={allCountries}
+          initialCategories={data.categories}
+          initialFeaturedCompanies={data.featuredCompanies}
+          initialLatestReviews={data.latestReviews}
+          initialStats={stats}
+        />
       </>
     );
     

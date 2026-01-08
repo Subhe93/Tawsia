@@ -15,6 +15,7 @@ import { CompanyMap } from '@/components/company-map';
 import { CompanyAwards } from '@/components/company-awards';
 import { SimilarCompanies } from '@/components/similar-companies';
 import { CompanySearch } from '@/components/company-search';
+import { CountryAutoSelect } from '@/components/company/country-auto-select';
 import type { CompanyWithRelations } from '@/lib/types/database';
 import type { Company } from '@/lib/data';
 import { 
@@ -254,6 +255,9 @@ export default async function CompanyPage({
 
     return (
       <>
+        {/* Auto-select country in navbar */}
+        <CountryAutoSelect country={company.country} />
+        
         {/* JSON-LD Schema للشركة */}
         <script
           type="application/ld+json"

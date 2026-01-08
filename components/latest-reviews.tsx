@@ -12,7 +12,7 @@ interface Review {
   id: string;
   rating: number;
   comment: string;
-  createdAt: Date;
+  createdAt: Date | string; // Can be Date object or ISO string
   userName: string; // اسم المستخدم من جدول Review
   userAvatar: string | null; // صورة المستخدم من جدول Review
   user: {
@@ -120,7 +120,14 @@ export function LatestReviews({ reviews }: LatestReviewsProps) {
               </div>
               <div className="flex items-center space-x-2 space-x-reverse">
                 <Calendar className="h-4 w-4" />
-                <ClientSideDate date={review.createdAt.toISOString().split('T')[0]} />
+                <ClientSideDate date={
+                  (() => {
+                    if (!review.createdAt) return new Date().toISOString().split('T')[0];
+                    if (typeof review.createdAt === 'string') return review.createdAt.split('T')[0];
+                    if (review.createdAt instanceof Date) return review.createdAt.toISOString().split('T')[0];
+                    return new Date(review.createdAt).toISOString().split('T')[0];
+                  })()
+                } />
               </div>
             </div>
           </div>

@@ -6,10 +6,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCategoryBySlug, getCompanies, getSubcategories, getAllCountries } from '@/lib/database/queries';
 import { CategoryHeader } from '@/components/category-header';
-import { CompaniesGrid } from '@/components/companies-grid';
-import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
-import { SubcategoriesEnhanced } from '@/components/subcategories-enhanced';
-import { CountriesGrid } from '@/components/countries-grid';
+import { CategoryClientWrapper } from '@/components/category-client-wrapper';
 import { 
   generateItemListSchema,
   generateOrganizationSchema,
@@ -87,8 +84,9 @@ export default async function GlobalCategoryPage({ params, searchParams = {} }: 
       getAllCountries()
     ]);
 
-    // إعداد الفلاتر من searchParams
-    const filters = {
+    // Only fetch data if country is already in search params
+    // Otherwise, let the client auto-select and trigger the fetch
+    const companiesResult = searchParams?.country ? await getCompanies({
       category: params.category,
       country: searchParams?.country,
       city: searchParams?.city,
@@ -98,17 +96,7 @@ export default async function GlobalCategoryPage({ params, searchParams = {} }: 
       sortBy: (searchParams?.sort as any) || 'rating',
       page: parseInt(searchParams?.page || '1'),
       limit: 20
-    };
-
-    const companiesResult = await getCompanies(filters);
-
-    // Debug: Log the companies result
-    console.log('Global Category Page Debug:', {
-      categoryName: category.name,
-      filters,
-      companiesCount: companiesResult?.data?.length || 0,
-      totalCount: companiesResult?.pagination?.total || 0,
-    });
+    }) : { data: [], pagination: { page: 1, limit: 20, total: 0, totalPages: 0 } };
 
     // Generate schemas for the category page
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
@@ -200,41 +188,13 @@ export default async function GlobalCategoryPage({ params, searchParams = {} }: 
 
           <CategoryHeader category={category} />
 
-          <SubcategoriesEnhanced subcategories={subcategories} category={params.category} />
-          
-          <div className="mt-12">
-          <AdvancedSearchFilters 
-            filterOptions={{ countries: allCountries, categories: [], cities: [], subAreas: [], subCategories: [] }}
-            initialValues={{
-              country: searchParams?.country,
-              city: searchParams?.city,
-              rating: searchParams?.rating,
-              verified: searchParams?.verified,
-              q: searchParams?.search,
-              sort: searchParams?.sort,
-            }}
+          <CategoryClientWrapper
+            allCountries={allCountries}
+            subcategories={subcategories}
+            categorySlug={params.category}
+            searchParams={searchParams}
+            companiesResult={companiesResult}
           />
-          </div>
-
-          <div className="mt-8">
-            <CompaniesGrid 
-              companies={companiesResult.data || []}
-              pagination={companiesResult.pagination}
-            />
-          </div>
-
-          {/* عرض الدول المتاحة لهذا التصنيف */}
-          <div className="mt-16">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                متوفر في الدول التالية
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                اختر الدولة لعرض الشركات في هذا التصنيف
-              </p>
-            </div>
-            <CountriesGrid countries={allCountries} categorySlug={params.category} />
-          </div>
         </div>
       </>
     );
