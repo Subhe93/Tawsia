@@ -15,7 +15,8 @@ import {
   Award,
   Globe,
   Eye,
-  Bell
+  Bell,
+  Code
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -80,6 +81,7 @@ export function CompanySidebar() {
           badge: companyData?.pendingReviews?.toString() || '0' 
         },
         { name: 'الرد على المراجعات', href: '/company-dashboard/reviews/responses', icon: MessageSquare },
+        { name: 'ويدجت المراجعات', href: '/company-dashboard/widget', icon: Code },
       ]
     },
     {

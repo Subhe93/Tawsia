@@ -19,7 +19,8 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  X
+  X,
+  Code
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -666,6 +667,11 @@ export default function AdminCompaniesPage() {
                           <Button variant="ghost" size="sm" asChild>
                             <Link href={`/admin/companies/${company.id}/edit`}>
                               <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button variant="ghost" size="sm" asChild title="كود الويدجت">
+                            <Link href={`/admin/companies/${company.id}/widget`}>
+                              <Code className="h-4 w-4" />
                             </Link>
                           </Button>
                           <AlertDialog>

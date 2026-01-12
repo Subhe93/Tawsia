@@ -257,8 +257,6 @@ export async function getCompanies(
     ...(subcategory && { subCategory: { slug: subcategory } }),
     ...(subCategory && { subCategory: { slug: subCategory } }),
     ...(rating && { rating: { gte: rating } }),
-    ...(verified !== undefined && { isVerified: verified }),
-    ...(featured !== undefined && { isFeatured: featured }),
     ...(hasWebsite && { website: { not: null } }),
     ...(hasPhone && { phone: { not: null } }),
     ...(hasEmail && { email: { not: null } }),
@@ -266,6 +264,13 @@ export async function getCompanies(
     ...(hasWorkingHours && { workingHours: { some: {} } }),
   };
 
+  if (verified !== undefined) {
+    where.isVerified = verified;
+  }
+
+  if (featured !== undefined) {
+    where.isFeatured = featured;
+  }
   // بناء ترتيب النتائج
   const orderBy: Prisma.CompanyOrderByWithRelationInput = (() => {
     switch (sortBy) {
