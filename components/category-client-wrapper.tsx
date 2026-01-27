@@ -6,7 +6,6 @@ import { useCountry } from '@/components/providers/country-provider';
 import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
 import { CompaniesGrid } from '@/components/companies-grid';
 import { SubcategoriesEnhanced } from '@/components/subcategories-enhanced';
-import { CountriesGrid } from '@/components/countries-grid';
 
 interface Country {
   id: string;
@@ -132,30 +131,6 @@ export function CategoryClientWrapper({
         <CompaniesGrid 
           companies={companiesResult.data || []}
           pagination={companiesResult.pagination}
-        />
-      </div>
-
-      {/* عرض الدول المتاحة لهذا التصنيف */}
-      <div className="mt-16">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            متوفر في الدول التالية
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            اختر الدولة لعرض الشركات في هذا التصنيف
-          </p>
-        </div>
-        <CountriesGrid 
-          countries={allCountries.map(c => ({
-            id: c.id,
-            code: c.code,
-            name: c.name,
-            flag: c.flag,
-            image: c.image || null,
-            description: c.description || null,
-            companiesCount: c.companiesCount || 0,
-          }))} 
-          categorySlug={categorySlug} 
         />
       </div>
     </>

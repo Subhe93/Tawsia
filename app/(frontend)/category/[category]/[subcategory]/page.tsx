@@ -7,7 +7,6 @@ import { getSubcategoryBySlug, getCompanies, getCategoryBySlug, getAllCountries 
 import { CategoryHeader } from '@/components/category-header';
 import { CompaniesGrid } from '@/components/companies-grid';
 import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
-import { CountriesGrid } from '@/components/countries-grid';
 import { Building2 } from 'lucide-react';
 import { 
   generateItemListSchema,
@@ -253,19 +252,6 @@ export default async function GlobalSubcategoryPage({ params, searchParams = {} 
               companies={companiesResult.data || []}
               pagination={companiesResult.pagination}
             />
-          </div>
-
-          {/* عرض الدول المتاحة لهذا التصنيف الفرعي */}
-          <div className="mt-16">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                متوفر في الدول التالية
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                اختر الدولة لعرض الشركات في هذا التصنيف الفرعي
-              </p>
-            </div>
-            <CountriesGrid countries={allCountries} categorySlug={params.category} subcategorySlug={params.subcategory} />
           </div>
         </div>
       </>
