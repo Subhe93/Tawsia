@@ -11,28 +11,33 @@ import prisma from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
+    console.log("GET /api/admin/companies/[id] - Params:", params);
+
     const session = await getServerSession(authOptions);
 
     if (
       !session?.user ||
       (session.user.role !== "SUPER_ADMIN" && session.user.role !== "ADMIN")
     ) {
+      console.log("Unauthorized access attempt");
       return NextResponse.json(
         { error: "غير مصرح لك بالوصول" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const companyId = params.id;
+    console.log("Company ID:", companyId);
 
     if (!companyId) {
       return NextResponse.json({ error: "معرف الشركة مطلوب" }, { status: 400 });
     }
 
     const company = await getCompanyForAdmin(companyId);
+    console.log("Company found:", company ? "Yes" : "No");
 
     if (!company) {
       return NextResponse.json({ error: "الشركة غير موجودة" }, { status: 404 });
@@ -47,7 +52,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -58,7 +63,7 @@ export async function PATCH(
     ) {
       return NextResponse.json(
         { error: "غير مصرح لك بالوصول" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -89,7 +94,7 @@ export async function PATCH(
     if (data.slug && !data.slug.trim()) {
       return NextResponse.json(
         { error: "رابط الشركة (slug) مطلوب" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -99,7 +104,7 @@ export async function PATCH(
         {
           error: "رابط الشركة يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -114,7 +119,7 @@ export async function PATCH(
     if (data.cityId && !data.cityId.trim()) {
       return NextResponse.json(
         { error: "مدينة الشركة مطلوبة" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -146,38 +151,38 @@ export async function PATCH(
         if (error.message.includes("slug")) {
           return NextResponse.json(
             { error: "هذا الرابط (slug) مستخدم بالفعل من قبل شركة أخرى" },
-            { status: 409 }
+            { status: 409 },
           );
         }
         return NextResponse.json(
           { error: "اسم الشركة أو الرابط موجود مسبقاً" },
-          { status: 409 }
+          { status: 409 },
         );
       }
 
       if (error.message.includes("Foreign key constraint failed")) {
         return NextResponse.json(
           { error: "البيانات المرجعية غير صحيحة (البلد، المدينة، أو الفئة)" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       return NextResponse.json(
         { error: `خطأ في قاعدة البيانات: ${error.message}` },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json(
       { error: "حدث خطأ غير متوقع في الخادم" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -188,7 +193,7 @@ export async function DELETE(
     ) {
       return NextResponse.json(
         { error: "غير مصرح لك بالوصول" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 

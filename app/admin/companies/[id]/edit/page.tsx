@@ -245,18 +245,36 @@ export default function EditCompanyPage() {
 
   // جلب بيانات الشركة
   useEffect(() => {
+    let isMounted = true
+    
     const fetchCompany = async () => {
       if (!params.id) return
 
       try {
         setIsLoading(true)
+        console.log('Fetching company with ID:', params.id)
         const response = await fetch(`/api/admin/companies/${params.id}`)
         
+        console.log('Response status:', response.status)
+        
         if (!response.ok) {
-          throw new Error('فشل في جلب بيانات الشركة')
+          const errorData = await response.json().catch(() => ({}))
+          console.error('API Error:', errorData)
+          throw new Error(errorData.error || 'فشل في جلب بيانات الشركة')
         }
 
-        const companyData = await response.json()
+        const data = await response.json()
+        console.log('API Response:', data)
+        
+        // API returns { company: {...} }, so we need to extract the company object
+        const companyData = data.company || data
+        
+        if (!isMounted) return
+        
+        if (!companyData || !companyData.id) {
+          throw new Error('بيانات الشركة غير صالحة')
+        }
+        
         setCompany(companyData)
 
         // ملء النموذج بالبيانات الحالية
@@ -287,17 +305,19 @@ export default function EditCompanyPage() {
         })
 
         // ملء ساعات العمل
-        const hoursMap = Object.fromEntries(
-          companyData.workingHours.map((hours: any) => [
-            hours.dayOfWeek,
-            {
-              openTime: hours.openTime || '',
-              closeTime: hours.closeTime || '',
-              isClosed: hours.isClosed
-            }
-          ])
-        )
-        setWorkingHours(prev => ({ ...prev, ...hoursMap }))
+        if (companyData.workingHours && Array.isArray(companyData.workingHours)) {
+          const hoursMap = Object.fromEntries(
+            companyData.workingHours.map((hours: any) => [
+              hours.dayOfWeek,
+              {
+                openTime: hours.openTime || '',
+                closeTime: hours.closeTime || '',
+                isClosed: hours.isClosed
+              }
+            ])
+          )
+          setWorkingHours(prev => ({ ...prev, ...hoursMap }))
+        }
 
         // ملء وسائل التواصل
         const socialMap = Object.fromEntries(
@@ -318,21 +338,33 @@ export default function EditCompanyPage() {
 
       } catch (error) {
         console.error('خطأ في جلب بيانات الشركة:', error)
-        toast({
-          title: 'خطأ في جلب بيانات الشركة',
-        })
+        if (isMounted) {
+          toast({
+            variant: 'destructive',
+            title: 'خطأ في جلب بيانات الشركة',
+            description: error instanceof Error ? error.message : 'حدث خطأ غير متوقع',
+          })
+        }
       } finally {
-        setIsLoading(false)
+        if (isMounted) {
+          setIsLoading(false)
+        }
       }
     }
 
-    if (session) {
+    if (status === 'authenticated' && params.id) {
       fetchCompany()
     }
-  }, [session, params.id])
+    
+    return () => {
+      isMounted = false
+    }
+  }, [status, params.id])
 
   // جلب البيانات المساعدة
   useEffect(() => {
+    let isMounted = true
+    
     const fetchData = async () => {
       try {
         console.log('جلب البلدان والفئات...')
@@ -341,15 +373,14 @@ export default function EditCompanyPage() {
           fetch('/api/admin/categories?activeOnly=true')
         ])
 
+        if (!isMounted) return
+
         if (countriesRes.ok) {
           const countriesData = await countriesRes.json()
           console.log('البلدان المحملة:', countriesData?.countries?.length || 0)
           setCountries(countriesData.countries || [])
         } else {
           console.error('فشل في جلب البلدان:', countriesRes.status)
-          toast({
-            title: 'فشل في جلب البلدان',
-          })
         }
 
         if (categoriesRes.ok) {
@@ -358,22 +389,20 @@ export default function EditCompanyPage() {
           setCategories(categoriesData.categories || [])
         } else {
           console.error('فشل في جلب الفئات:', categoriesRes.status)
-          toast({
-            title: 'فشل في جلب الفئات',
-          })
         }
       } catch (error) {
         console.error('خطأ في جلب البيانات:', error)
-        toast({
-          title: 'خطأ في جلب البيانات',
-        })
       }
     }
 
-    if (session) {
+    if (status === 'authenticated') {
       fetchData()
     }
-  }, [session])
+    
+    return () => {
+      isMounted = false
+    }
+  }, [status])
 
   // جلب المدن عند تغيير البلد
   useEffect(() => {
