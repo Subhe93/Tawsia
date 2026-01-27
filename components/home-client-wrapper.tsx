@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useCountry } from '@/components/providers/country-provider';
 import { HomeHero } from '@/components/home-hero';
-import { CountriesGrid } from '@/components/countries-grid';
 import { FeaturedCompanies } from '@/components/featured-companies';
 import { LatestReviews } from '@/components/latest-reviews';
 import { ServicesCategories } from '@/components/services-categories';
@@ -111,8 +110,9 @@ export function HomeClientWrapper({
               عرض جميع الخدمات
             </Link>
           </div>
-          <CountriesGrid countries={allCountries} />
-          <FeaturedCompanies companies={featuredCompanies} />
+          {featuredCompanies.length > 0 && (
+            <FeaturedCompanies companies={featuredCompanies} />
+          )}
           <LatestReviews reviews={latestReviews} />
         </>
       )}
