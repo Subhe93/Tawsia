@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useCountry } from '@/components/providers/country-provider';
 import { 
   Building2, 
   Car, 
@@ -136,6 +137,17 @@ const getIcon = (iconName?: string) => {
 };
 
 export function SubcategoriesEnhanced({ subcategories, country, city, subArea, category }: SubcategoriesEnhancedProps) {
+  const { selectedCountry } = useCountry();
+
+  // Helper function to add country query parameter
+  const getUrlWithCountry = (path: string) => {
+    if (selectedCountry?.code) {
+      const separator = path.includes('?') ? '&' : '?';
+      return `${path}${separator}country=${selectedCountry.code.toLowerCase()}`;
+    }
+    return path;
+  };
+
   if (!subcategories || subcategories.length === 0) {
     return null;
   }
@@ -166,7 +178,7 @@ export function SubcategoriesEnhanced({ subcategories, country, city, subArea, c
                 } else if (country) {
                   return `/country/${country}/category/${category}/${subcategory.slug}`;
                 } else {
-                  return `/category/${category}/${subcategory.slug}`;
+                  return getUrlWithCountry(`/category/${category}/${subcategory.slug}`);
                 }
               })()}
               className="group"

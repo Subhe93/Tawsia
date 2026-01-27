@@ -105,7 +105,7 @@ export function HomeClientWrapper({
           />
           <div className="text-center mt-12">
             <Link
-              href="/services"
+              href={selectedCountry?.code ? `/services?country=${selectedCountry.code.toLowerCase()}` : '/services'}
               className="inline-flex items-center px-8 py-4 bg-brand-orange hover:bg-orange-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 animate-fade-in-up delay-1200"
             >
               عرض جميع الخدمات

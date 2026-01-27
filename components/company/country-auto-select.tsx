@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useCountry } from '@/components/providers/country-provider';
 
 interface CountryAutoSelectProps {
@@ -22,11 +22,10 @@ interface CountryAutoSelectProps {
  */
 export function CountryAutoSelect({ country }: CountryAutoSelectProps) {
   const { selectedCountry, setSelectedCountry } = useCountry();
-  const hasSetRef = useRef(false);
 
   useEffect(() => {
-    // Only run once when country is available
-    if (!country || hasSetRef.current) return;
+    // Only run when country is available
+    if (!country) return;
 
     // Check if we need to update (different country or no country selected)
     const shouldUpdate = !selectedCountry || selectedCountry.code !== country.code;
@@ -46,8 +45,6 @@ export function CountryAutoSelect({ country }: CountryAutoSelectProps) {
       
       // Force update localStorage directly to ensure persistence
       localStorage.setItem('selectedCountry', JSON.stringify(countryData));
-      
-      hasSetRef.current = true;
     }
   }, [country, selectedCountry, setSelectedCountry]);
 

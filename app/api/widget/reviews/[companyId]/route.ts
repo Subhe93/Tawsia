@@ -13,7 +13,7 @@ interface WidgetConfig {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { companyId: string } }
+  { params }: { params: { companyId: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -235,15 +235,13 @@ function generateWidgetHTML(params: {
         ? company.reviews
             .map(
               (review: any, index: number) => `
-      <div class="review-slide" style="${config.reviewCard} width: ${
-                size === "m" ? "120px" : size === "l" ? "200px" : "225px"
-              }; min-height: ${
-                size === "m" ? "60px" : size === "l" ? "100px" : "150px"
-              }; display: flex; flex-direction: column; flex-shrink: 0; ${
-                size === "m"
-                  ? "justify-content: center; align-items: center;"
-                  : ""
-              }">
+      <a href="${companyUrl}" target="_blank" class="review-slide" style="${config.reviewCard} width: ${
+        size === "m" ? "120px" : size === "l" ? "200px" : "225px"
+      }; min-height: ${
+        size === "m" ? "60px" : size === "l" ? "100px" : "150px"
+      }; display: flex; flex-direction: column; flex-shrink: 0; text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; ${
+        size === "m" ? "justify-content: center; align-items: center;" : ""
+      }">
         <div style="display: flex; align-items: center; margin-bottom: ${
           size === "m" ? "0" : "2px"
         };">
@@ -288,7 +286,7 @@ function generateWidgetHTML(params: {
               colors.text
             }; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px;">
               <span>${escapeHtml(
-                review.userName || review.user?.name || "مستخدم غير معروف"
+                review.userName || review.user?.name || "مستخدم غير معروف",
               )}</span>
               <span style="font-size: 10px; color: ${
                 colors.textSecondary
@@ -316,8 +314,8 @@ function generateWidgetHTML(params: {
         </div>`
             : ""
         }
-      </div>
-    `
+      </a>
+    `,
             )
             .join("")
         : `
@@ -333,8 +331,8 @@ function generateWidgetHTML(params: {
         <p style="font-size: 14px; color: ${
           colors.textSecondary
         }; margin-bottom: 16px;">كن أول من يكتب مراجعة لـ ${escapeHtml(
-            company.name
-          )}</p>
+          company.name,
+        )}</p>
         <a href="${companyUrl}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500;">
           اكتب مراجعة
         </a>
@@ -364,8 +362,8 @@ function generateWidgetHTML(params: {
             ? "top: 50%; left: 10px; transform: translateY(-50%);"
             : "bottom: 10px; right: 50%; transform: translateX(50%) rotate(90deg);"
         }; background: ${colors.bg}; border: 2px solid ${
-                colors.border
-              }; border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; display: flex;">
+          colors.border
+        }; border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; display: flex;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${
             colors.text
           }" stroke-width="2">
@@ -377,8 +375,8 @@ function generateWidgetHTML(params: {
             ? "top: 50%; right: 10px; transform: translateY(-50%);"
             : "top: 10px; right: 50%; transform: translateX(50%) rotate(90deg);"
         }; background: ${colors.bg}; border: 2px solid ${
-                colors.border
-              }; border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; display: none;">
+          colors.border
+        }; border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; display: none;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${
             colors.text
           }" stroke-width="2">
@@ -466,6 +464,10 @@ function generateWidgetHTML(params: {
     .slider-btn:active {
       transform: translateY(-50%) scale(0.95) !important;
     }
+    .review-slide:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
     .logo-link {
       position: fixed;
       bottom: 16px;
@@ -543,6 +545,13 @@ function generateWidgetHTML(params: {
         </svg>
         <span>عرض المزيد</span>
       </a>
+      <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 500; transition: all 0.3s; border: none; cursor: pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        <span>اكتب توصية</span>
+      </a>
       <a href="https://twsia.com" target="_blank" style="display: flex; align-items: center;">
         <img src="https://twsia.com/img/twsia-logo.png" alt="Tawsia" style="height: 28px; width: auto;" />
       </a>
@@ -573,10 +582,10 @@ function generateWidgetHTML(params: {
     const summaryContent = useInlineLayout
       ? `
   <div style="display: flex; align-items: center; justify-content: space-between; gap: ${inlineGap}; padding: ${inlinePadding}; border: 1px solid ${
-          colors.border
-        }; border-radius: 8px; background: ${
-          colors.bg
-        }; font-size: ${inlineFontSize};">
+    colors.border
+  }; border-radius: 8px; background: ${
+    colors.bg
+  }; font-size: ${inlineFontSize};">
     <div style="display: flex; align-items: center; gap: ${inlineGap};">
       <div style="display: flex; align-items: center; gap: 4px;">
         <svg width="${inlineIconSize}" height="${inlineIconSize}" viewBox="0 0 24 24" fill="${
@@ -616,6 +625,13 @@ function generateWidgetHTML(params: {
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
         <span>المزيد</span>
+      </a>
+      <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: ${inlineButtonPadding}; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: ${inlineButtonFontSize}; font-weight: 500; transition: all 0.3s; border: none; cursor: pointer;">
+        <svg width="${inlineIconSize}" height="${inlineIconSize}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        <span> اكتب توصية</span>
       </a>
       <a href="https://twsia.com" target="_blank" style="display: flex; align-items: center;">
         <img src="https://twsia.com/img/twsia-logo.png" alt="Tawsia" style="height: ${
@@ -674,6 +690,13 @@ function generateWidgetHTML(params: {
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
         <span>عرض المزيد</span>
+      </a>
+      <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 500; transition: all 0.3s; border: none; cursor: pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        <span>اكتب مراجعة</span>
       </a>
       <a href="https://twsia.com" target="_blank" style="display: flex; align-items: center;">
         <img src="https://twsia.com/img/twsia-logo.png" alt="Tawsia" style="height: 28px; width: auto;" />
@@ -758,8 +781,8 @@ function generateVerticalWidget(params: {
   <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px; border: 1px solid ${
     colors.border
   }; border-radius: 12px; background: ${
-      colors.bg
-    }; max-width: 300px; margin: 0 auto;">
+    colors.bg
+  }; max-width: 300px; margin: 0 auto;">
     
     <!-- Row 1: Rating with link icon -->
     <div style="display: flex; align-items: center; gap: 10px;">
@@ -818,8 +841,8 @@ function generateVerticalWidget(params: {
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; border: 1px solid ${
     colors.border
   }; border-radius: 10px; background: ${
-      colors.bg
-    }; max-width: 350px; margin: 0 auto;">
+    colors.bg
+  }; max-width: 350px; margin: 0 auto;">
     
     <!-- Row 1, Col 1: Total comments with info icon -->
     <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
@@ -875,9 +898,9 @@ function generateVerticalWidget(params: {
       ? reviewsToShow
           .map(
             (review: any) => `
-      <div style="padding: 12px; border: 1px solid ${
+      <a href="${companyUrl}" target="_blank" style="display: block; padding: 12px; border: 1px solid ${
         colors.border
-      }; border-radius: 8px; background: ${colors.bg}; margin-bottom: 10px;">
+      }; border-radius: 8px; background: ${colors.bg}; margin-bottom: 10px; text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
         <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
           ${generateStars(review.rating, colors.star, 16)}
         </div>
@@ -914,8 +937,8 @@ function generateVerticalWidget(params: {
               </span>`
           }
         </div>
-      </div>
-    `
+      </a>
+    `,
           )
           .join("")
       : `<div style="text-align: center; padding: 20px; color: ${colors.textSecondary};">لا توجد مراجعات بعد</div>`;
@@ -965,6 +988,13 @@ function generateVerticalWidget(params: {
         </svg>
         عرض المزيد
       </a>
+      <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 500;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        اكتب مراجعة
+      </a>
     </div>
   `;
 
@@ -990,6 +1020,10 @@ function generateVerticalWidget(params: {
       direction: rtl;
       padding: 10px;
     }
+    a[style*="display: block"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
   </style>
 </head>
 <body>
@@ -1007,7 +1041,7 @@ function generateVerticalWidget(params: {
 function generateStars(
   rating: number,
   color: string,
-  size: number = 16
+  size: number = 16,
 ): string {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.5;

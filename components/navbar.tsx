@@ -61,6 +61,20 @@ export function Navbar() {
   const { data: session, status } = useSession();
   const { selectedCountry, setSelectedCountry } = useCountry();
 
+  // Debug: Log when selectedCountry changes
+  useEffect(() => {
+    console.log('[Navbar] selectedCountry changed:', selectedCountry?.code);
+  }, [selectedCountry]);
+
+  // Helper function to add country query parameter to URLs
+  const getUrlWithCountry = (path: string) => {
+    if (selectedCountry?.code) {
+      const separator = path.includes('?') ? '&' : '?';
+      return `${path}${separator}country=${selectedCountry.code.toLowerCase()}`;
+    }
+    return path;
+  };
+
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev => 
       prev.includes(categoryId) 
@@ -151,7 +165,7 @@ export function Navbar() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-3 space-x-reverse">
+            <Link href={getUrlWithCountry('/')} className="flex items-center space-x-3 space-x-reverse">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center">
                 {/* <span className="text-white font-bold text-sm">دش</span> */}
                 <img src="/img/twsia-logo.png" alt="Logo" className="w-6 h-6 object-contain" />
@@ -161,13 +175,13 @@ export function Navbar() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6 space-x-reverse">
-              <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <Link href={getUrlWithCountry('/')} className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 الرئيسية
               </Link>
-              <Link href="/services" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <Link href={getUrlWithCountry('/services')} className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                التصنيفات
               </Link>
-              <Link href="/search" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <Link href={getUrlWithCountry('/search')} className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 البحث المتقدم
               </Link>
               
@@ -183,7 +197,7 @@ export function Navbar() {
                   <div className="p-4 max-h-[500px] overflow-y-auto">
                     <div className="mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
                       <Link 
-                        href="/services"
+                        href={getUrlWithCountry('/services')}
                         className="text-lg font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                       >
                         جميع التصنيفات
@@ -197,7 +211,7 @@ export function Navbar() {
                           <div key={category.id} className="border-b border-gray-100 dark:border-gray-700 pb-2">
                             <div className="flex items-center justify-between">
                               <Link 
-                                href={`/category/${category.slug}`}
+                                href={getUrlWithCountry(`/category/${category.slug}`)}
                                 className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex-1"
                               >
                                 {category.name}
@@ -230,7 +244,7 @@ export function Navbar() {
                                   {category.subCategories.slice(0, 5).map((subCat) => (
                                     <li key={subCat.id}>
                                       <Link 
-                                        href={`/category/${category.slug}/${subCat.slug}`}
+                                        href={getUrlWithCountry(`/category/${category.slug}/${subCat.slug}`)}
                                         className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors block py-1"
                                       >
                                         • {subCat.name}
@@ -240,7 +254,7 @@ export function Navbar() {
                                   {category.subCategories.length > 5 && (
                                     <li>
                                       <Link 
-                                        href={`/category/${category.slug}`}
+                                        href={getUrlWithCountry(`/category/${category.slug}`)}
                                         className="text-sm text-blue-600 dark:text-blue-400 hover:underline py-1 block"
                                       >
                                         +{category.subCategories.length - 5} المزيد
@@ -461,21 +475,21 @@ export function Navbar() {
             <div className="md:hidden border-t border-gray-200 dark:border-gray-700 py-4">
               <div className="space-y-3">
                 <Link 
-                  href="/" 
+                  href={getUrlWithCountry('/')} 
                   className="block text-gray-700 dark:text-gray-300 hover:text-brand-green dark:hover:text-brand-green"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   الرئيسية
                 </Link>
                 <Link 
-                  href="/services" 
+                  href={getUrlWithCountry('/services')} 
                   className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   جميع التصنيفات
                 </Link>
                 <Link 
-                  href="/search" 
+                  href={getUrlWithCountry('/search')} 
                   className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -486,7 +500,7 @@ export function Navbar() {
                 <div className="space-y-2">
                   <div className="font-semibold text-gray-900 dark:text-white">التصنيفات</div>
                   <Link 
-                    href="/services"
+                    href={getUrlWithCountry('/services')}
                     className="block text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium pr-4"
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -498,7 +512,7 @@ export function Navbar() {
                     categories.map((category) => (
                       <div key={category.id} className="pr-4">
                         <Link 
-                          href={`/category/${category.slug}`}
+                          href={getUrlWithCountry(`/category/${category.slug}`)}
                           className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium"
                           onClick={() => setIsMenuOpen(false)}
                         >
@@ -509,7 +523,7 @@ export function Navbar() {
                             {category.subCategories.map((subCat) => (
                               <Link 
                                 key={subCat.id}
-                                href={`/category/${category.slug}/${subCat.slug}`}
+                                href={getUrlWithCountry(`/category/${category.slug}/${subCat.slug}`)}
                                 className="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
                                 onClick={() => setIsMenuOpen(false)}
                               >

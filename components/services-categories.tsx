@@ -65,6 +65,15 @@ const colorOptions = [
 
 
 export function ServicesCategories({ categories, country, city, subArea, selectedCountryCode }: ServiceCategoriesProps) {
+  // Helper function to add country query parameter
+  const getUrlWithCountry = (path: string) => {
+    if (selectedCountryCode) {
+      const separator = path.includes('?') ? '&' : '?';
+      return `${path}${separator}country=${selectedCountryCode.toLowerCase()}`;
+    }
+    return path;
+  };
+
   // استخدام البيانات المرسلة أو البيانات الافتراضية
   const displayCategories = categories
     .map((cat, index) => ({
@@ -98,7 +107,7 @@ export function ServicesCategories({ categories, country, city, subArea, selecte
                 } else if (country) {
                   return `/country/${country}/category/${category.slug}`;
                 } else {
-                  return `/category/${category.slug}`;
+                  return getUrlWithCountry(`/category/${category.slug}`);
                 }
               })()}
               className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:rotate-1 p-6 text-center animate-fade-in-up"
