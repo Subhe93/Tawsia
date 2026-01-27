@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { getCityBySlug, getCompanies, getCategories, getSubAreas } from '@/lib/database/queries';
 import { CompaniesGrid } from '@/components/companies-grid';
 import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
-import { ServicesCategories } from '@/components/services-categories';
+import { ServicesCategoriesCompact } from '@/components/services-categories-compact';
 import { SubAreasGrid } from '@/components/sub-area/sub-areas-grid';
 import { CountryAutoSelect } from '@/components/company/country-auto-select';
 import { 
@@ -267,8 +267,8 @@ export default async function CityPage({ params, searchParams = {} }: CityPagePr
           </div>
 
           {/* عرض التصنيفات المتاحة */}
-          <div className="mt-12">
-            <ServicesCategories 
+          <div className="mt-8">
+            <ServicesCategoriesCompact 
               categories={categories} 
               country={params.country}
               city={params.city}
