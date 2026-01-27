@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import { HomeClientWrapper } from '@/components/home-client-wrapper';
 import { getHomePageData, getSiteStats, getAllCountries } from '@/lib/services/homepage.service';
+import { getCountryCities } from '@/lib/services/country.service';
 import { generateHomePageMetadata, generateJsonLd, type SiteStats } from '@/lib/seo/metadata';
 import { applySeoOverride } from '@/lib/seo/overrides';
 
@@ -25,12 +26,23 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   try {
-    // جلب البيانات باستخدام طبقة الخدمات المحسنة
-    const [data, allCountries, stats] = await Promise.all([
-      getHomePageData(),
-      getAllCountries(),
-      getSiteStats()
+    // Get all countries first to determine the first country code
+    const allCountries = await getAllCountries();
+    const firstCountryCode = allCountries.length > 0 ? allCountries[0].code : undefined;
+    
+    // جلب البيانات - cities/reviews filtered by country, but featured companies globally
+    const [countryData, globalData, stats, initialCities] = await Promise.all([
+      getHomePageData(firstCountryCode), // For cities and reviews (filtered by country)
+      getHomePageData(), // For featured companies (global, no country filter)
+      getSiteStats(),
+      firstCountryCode ? getCountryCities(firstCountryCode) : Promise.resolve([])
     ]);
+    
+    // Use global featured companies
+    const data = {
+      ...countryData,
+      featuredCompanies: globalData.featuredCompanies,
+    };
     
     // تسجيل إحصائيات للتطوير
     if (process.env.NODE_ENV === 'development') {
@@ -63,6 +75,7 @@ export default async function HomePage() {
           initialFeaturedCompanies={data.featuredCompanies}
           initialLatestReviews={data.latestReviews}
           initialStats={stats}
+          initialCities={initialCities}
         />
       </>
     );

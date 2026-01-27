@@ -3,6 +3,7 @@ import {
   getHomePageData,
   getSiteStatsByCountry,
 } from "@/lib/services/homepage.service";
+import { getCountryCities } from "@/lib/services/country.service";
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,18 +13,22 @@ export async function GET(request: NextRequest) {
     if (!country) {
       return NextResponse.json(
         { error: "Country code is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Fetch data filtered by country
-    const data = await getHomePageData(country);
-    const stats = await getSiteStatsByCountry(country);
+    // Fetch data - cities/reviews filtered by country, featured companies globally
+    const [countryData, globalData, stats, cities] = await Promise.all([
+      getHomePageData(country), // For reviews (filtered by country)
+      getHomePageData(), // For featured companies (global)
+      getSiteStatsByCountry(country),
+      getCountryCities(country),
+    ]);
 
     return NextResponse.json({
-      categories: data.categories,
-      featuredCompanies: data.featuredCompanies,
-      latestReviews: data.latestReviews.map((review) => ({
+      cities: cities,
+      featuredCompanies: globalData.featuredCompanies, // Global featured companies
+      latestReviews: countryData.latestReviews.map((review) => ({
         ...review,
         createdAt:
           review.createdAt instanceof Date
@@ -31,17 +36,17 @@ export async function GET(request: NextRequest) {
             : review.createdAt,
       })),
       stats: {
-        totalCountries: 1,
-        totalCompanies: stats.companiesCount,
-        totalCategories: stats.categoriesCount,
-        totalReviews: stats.reviewsCount,
+        countriesCount: 1,
+        companiesCount: stats.companiesCount,
+        categoriesCount: stats.categoriesCount,
+        reviewsCount: stats.reviewsCount,
       },
     });
   } catch (error) {
     console.error("Error fetching home data:", error);
     return NextResponse.json(
       { error: "Failed to fetch data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

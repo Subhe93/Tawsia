@@ -133,15 +133,6 @@ export function LatestReviews({ reviews }: LatestReviewsProps) {
           </div>
         ))}
       </div>
-
-      <div className="text-center mt-12">
-        <Link
-          href="/reviews"
-          className="inline-flex items-center px-8 py-4 bg-brand-yellow hover:bg-yellow-600 text-white font-medium rounded-xl transition-colors shadow-lg hover:shadow-xl"
-        >
-          عرض جميع التقييمات
-        </Link>
-      </div>
     </section>
   );
 }

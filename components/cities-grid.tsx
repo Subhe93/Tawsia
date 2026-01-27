@@ -30,7 +30,7 @@ export function CitiesGrid({ cities, countryCode }: CitiesGridProps) {
         <Link
           key={city.slug}
           href={`/country/${countryCode}/city/${city.slug}`}
-          className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 overflow-hidden border border-gray-100 dark:border-gray-700"
+          className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700"
         >
           <div className="relative h-24 overflow-hidden">
             <Image
@@ -43,7 +43,7 @@ export function CitiesGrid({ cities, countryCode }: CitiesGridProps) {
           </div>
           
           <div className="p-3">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-brand-green dark:group-hover:text-brand-green transition-colors truncate">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-brand-green dark:group-hover:text-brand-green transition-colors line-clamp-1">
               {city.name}
             </h3>
             
@@ -59,7 +59,7 @@ export function CitiesGrid({ cities, countryCode }: CitiesGridProps) {
       {hasMoreCities && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="group bg-gradient-to-br from-brand-green to-brand-yellow rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center text-white cursor-pointer min-h-[140px]"
+          className="group bg-gradient-to-br from-brand-green to-brand-yellow rounded-xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-white cursor-pointer min-h-[140px]"
         >
           <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300">
             {isExpanded ? (
