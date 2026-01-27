@@ -8,7 +8,7 @@ import { applySeoOverride } from '@/lib/seo/overrides'
 
 import { CompaniesGrid } from '@/components/companies-grid';
 import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
-import { ServicesCategories } from '@/components/services-categories';
+import { ServicesCategoriesCompact } from '@/components/services-categories-compact';
 import { 
   generateItemListSchema,
   generateOrganizationSchema,
@@ -288,8 +288,8 @@ export default async function SubAreaPage({ params, searchParams = {} }: SubArea
           </div>
 
           {/* عرض التصنيفات المتاحة */}
-          <div className="mt-12">
-            <ServicesCategories 
+          <div className="mt-8">
+            <ServicesCategoriesCompact 
               categories={categories} 
               country={params.country}
               city={params.city}
