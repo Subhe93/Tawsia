@@ -155,7 +155,7 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
                 )}
                 
                 <Button asChild variant="outline" size="lg" className="bg-white/20 backdrop-blur-md hover:bg-white/30 text-white border-white/40 hover:border-white/60 shadow-lg transition-all duration-300 px-6 py-3">
-                  <a href={`https://www.google.com/maps/place/${encodeURIComponent(address)}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`https://www.google.com/maps/place/${encodeURIComponent(address)}`} target="_blank" rel="noopener noreferrer nofollow">
                     <Navigation className="h-5 w-5 ml-2" />
                     الاتجاهات
                   </a>
@@ -163,7 +163,7 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
                 
                 {company.website && (
                   <Button asChild variant="outline" size="lg" className="bg-white/20 backdrop-blur-md hover:bg-white/30 text-white border-white/40 hover:border-white/60 shadow-lg transition-all duration-300 px-6 py-3">
-                    <a href={company.website} target="_blank" rel="noopener noreferrer">
+                    <a href={company.website} target="_blank" rel="noopener noreferrer nofollow">
                       <Globe className="h-5 w-5 ml-2" />
                       زيارة الموقع
                     </a>
@@ -324,7 +324,7 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
           <div className="grid grid-cols-2 gap-3">
             {company.website && (
               <Button asChild variant="outline" className="py-3 rounded-xl">
-                <a href={company.website} target="_blank" rel="noopener noreferrer">
+                <a href={company.website} target="_blank" rel="noopener noreferrer nofollow">
                   <Globe className="h-4 w-4 ml-2" />
                   الموقع
                 </a>

@@ -197,7 +197,7 @@ export function CompanyInfo({ company }: CompanyInfoProps) {
               <a 
                 href={company.website} 
                 target="_blank" 
-                rel="noopener noreferrer"
+                rel="noopener noreferrer nofollow"
                 className="text-gray-900 dark:text-white hover:text-purple-600 transition-colors"
               >
                 {company.website}
@@ -219,7 +219,7 @@ export function CompanyInfo({ company }: CompanyInfoProps) {
                       key={platform}
                       href={url}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener noreferrer nofollow"
                       className={`flex items-center justify-center w-10 h-10 rounded-full border transition-all duration-300 hover:scale-110 ${getSocialColor(platform)}`}
                     >
                       {getSocialIcon(platform)}

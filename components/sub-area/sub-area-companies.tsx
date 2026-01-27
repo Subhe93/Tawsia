@@ -214,7 +214,7 @@ export function SubAreaCompanies({ subArea, companies }: SubAreaCompaniesProps) 
                         <a 
                           href={company.website} 
                           target="_blank" 
-                          rel="noopener noreferrer"
+                          rel="noopener noreferrer nofollow"
                           className="text-blue-600 hover:underline"
                         >
                           الموقع الإلكتروني
