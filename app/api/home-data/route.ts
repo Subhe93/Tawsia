@@ -17,17 +17,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch data - cities/reviews filtered by country, featured companies globally
-    const [countryData, globalData, stats, cities] = await Promise.all([
-      getHomePageData(country), // For reviews (filtered by country)
-      getHomePageData(), // For featured companies (global)
+    // Fetch data filtered by country
+    const [countryData, stats, cities] = await Promise.all([
+      getHomePageData(country), // Get all data filtered by country
       getSiteStatsByCountry(country),
       getCountryCities(country),
     ]);
 
     return NextResponse.json({
       cities: cities,
-      featuredCompanies: globalData.featuredCompanies, // Global featured companies
+      featuredCompanies: countryData.featuredCompanies, // Featured companies filtered by country
       latestReviews: countryData.latestReviews.map((review) => ({
         ...review,
         createdAt:

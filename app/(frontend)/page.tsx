@@ -30,19 +30,15 @@ export default async function HomePage() {
     const allCountries = await getAllCountries();
     const firstCountryCode = allCountries.length > 0 ? allCountries[0].code : undefined;
     
-    // جلب البيانات - cities/reviews filtered by country, but featured companies globally
-    const [countryData, globalData, stats, initialCities] = await Promise.all([
-      getHomePageData(firstCountryCode), // For cities and reviews (filtered by country)
-      getHomePageData(), // For featured companies (global, no country filter)
+    // جلب البيانات - all data filtered by the first country
+    const [countryData, stats, initialCities] = await Promise.all([
+      getHomePageData(firstCountryCode), // All data filtered by country
       getSiteStats(),
       firstCountryCode ? getCountryCities(firstCountryCode) : Promise.resolve([])
     ]);
     
-    // Use global featured companies
-    const data = {
-      ...countryData,
-      featuredCompanies: globalData.featuredCompanies,
-    };
+    // Use country-filtered data
+    const data = countryData;
     
     // تسجيل إحصائيات للتطوير
     if (process.env.NODE_ENV === 'development') {

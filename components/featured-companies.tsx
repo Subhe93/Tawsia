@@ -28,9 +28,10 @@ interface FeaturedCompany {
 
 interface FeaturedCompaniesProps {
   companies: FeaturedCompany[];
+  selectedCountry?: string;
 }
 
-export function FeaturedCompanies({ companies: featuredCompanies }: FeaturedCompaniesProps) {
+export function FeaturedCompanies({ companies: featuredCompanies, selectedCountry }: FeaturedCompaniesProps) {
   // عدم عرض القسم إذا لم توجد شركات
   if (!featuredCompanies || featuredCompanies.length === 0) {
     return (
@@ -129,7 +130,7 @@ export function FeaturedCompanies({ companies: featuredCompanies }: FeaturedComp
 
       <div className="text-center mt-12">
         <Link
-          href="/companies"
+          href={selectedCountry ? `/companies?country=${selectedCountry}` : '/companies'}
           className="inline-flex items-center px-8 py-4 bg-brand-green hover:bg-green-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 animate-fade-in-up delay-1000"
         >
           عرض جميع الشركات

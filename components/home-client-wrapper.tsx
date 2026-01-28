@@ -139,7 +139,7 @@ export function HomeClientWrapper({
               <CitiesGrid cities={cities} countryCode={selectedCountry.code} />
             </div>
           )}
-          <FeaturedCompanies companies={featuredCompanies} />
+          <FeaturedCompanies companies={featuredCompanies} selectedCountry={selectedCountry?.code} />
           <LatestReviews reviews={latestReviews} />
         </>
       )}
