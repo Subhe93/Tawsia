@@ -134,7 +134,9 @@ export default function CompanyDetailsPage() {
       }
 
       const data = await response.json()
-      setCompany(data)
+      // API returns { company: {...} }, so we need to extract the company object
+      const companyData = data.company || data
+      setCompany(companyData)
 
     } catch (error) {
       console.error('خطأ في جلب بيانات الشركة:', error)
@@ -175,7 +177,9 @@ export default function CompanyDetailsPage() {
         throw new Error('فشل في تحديث حالة الشركة')
       }
 
-      const updatedCompany = await response.json()
+      const data = await response.json()
+      // Handle both formats: { company: {...} } or direct company object
+      const updatedCompany = data.company || data
       setCompany(updatedCompany)
       
       const statusMap = {
@@ -307,15 +311,15 @@ export default function CompanyDetailsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <span className="font-medium">{company.rating.toFixed(1)}</span>
-                  <span className="text-sm text-gray-500">({company._count.reviews} مراجعة)</span>
+                  <span className="font-medium">{(company.rating ?? 0).toFixed(1)}</span>
+                  <span className="text-sm text-gray-500">({company._count?.reviews ?? 0} مراجعة)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm">{company.city.name}, {company.country.name}</span>
+                  <span className="text-sm">{company.city?.name}, {company.country?.name}</span>
                 </div>
                 <div>
-                  <Badge variant="secondary">{company.category.name}</Badge>
+                  <Badge variant="secondary">{company.category?.name}</Badge>
                 </div>
               </div>
             </CardContent>

@@ -622,7 +622,7 @@ export default function EditCompanyPage() {
       const workingHoursResponse = await fetch(`/api/admin/companies/${params.id}/working-hours`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(workingHoursData)
+        body: JSON.stringify({ workingHours: workingHoursData })
       })
 
       if (!workingHoursResponse.ok) {
@@ -1446,10 +1446,10 @@ export default function EditCompanyPage() {
 
                   const data = await response.json();
                   setWorkingHours(data.workingHours);
-                  toast.success('تم تحديث ساعات العمل بنجاح');
+                  toast({ title: 'تم تحديث ساعات العمل بنجاح' });
                 } catch (error) {
                   console.error('خطأ في تحديث ساعات العمل:', error);
-                  toast.error('فشل في تحديث ساعات العمل');
+                  toast({ variant: 'destructive', title: 'فشل في تحديث ساعات العمل' });
                 }
               }}
               isLoading={isSaving}
