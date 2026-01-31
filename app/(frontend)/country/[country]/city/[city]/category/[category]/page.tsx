@@ -6,8 +6,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCategoryBySlug, getCompanies, getSubcategories, getCountryByCode, getCityBySlug } from '@/lib/database/queries';
 import { CategoryHeader } from '@/components/category-header';
-import { CompaniesGrid } from '@/components/companies-grid';
-import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
+import { CityCategoryClientWrapper } from '@/components/city-category-client-wrapper';
 import { SubcategoriesEnhanced } from '@/components/subcategories-enhanced';
 import { Building2 } from 'lucide-react';
 import { 
@@ -275,29 +274,15 @@ export default async function CityCategoryPage({ params, searchParams = {} }: Ci
               </span>
             </div>
          
-            <AdvancedSearchFilters 
-              showLocationFilter={false}
-              showCategoryFilter={false}
-              showRatingFilter={true}
-              showPriceFilter={true}
-              showHoursFilter={true}
+            <CityCategoryClientWrapper
+              companiesResult={companiesResult}
+              countrySlug={params.country}
+              countryName={countryName}
+              citySlug={params.city}
+              cityName={cityName}
+              categorySlug={params.category}
+              categoryName={category.name}
             />
-            
-            {companiesResult.data && companiesResult.data.length > 0 ? (
-              <CompaniesGrid 
-                companies={companiesResult.data} 
-                pagination={companiesResult.pagination}
-              />
-            ) : (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  لا توجد شركات في هذه الفئة في {cityName} حالياً
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  يرجى المحاولة مرة أخرى لاحقاً أو تصفح فئات أخرى
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </>
