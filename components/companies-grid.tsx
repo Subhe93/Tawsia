@@ -1,6 +1,9 @@
+'use client';
+
 export const dynamic = "force-dynamic"; 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { Star, MapPin, Phone, Globe, Verified } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -47,6 +50,15 @@ interface CompaniesGridProps {
 }
 
 export function CompaniesGrid({ companies, pagination }: CompaniesGridProps) {
+  const searchParams = useSearchParams();
+  
+  // Helper function to create pagination URL while preserving all current search params
+  const createPageUrl = (pageNum: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', pageNum.toString());
+    return `?${params.toString()}`;
+  };
+
   if (companies.length === 0) {
     return (
       <div className="text-center py-12">
@@ -161,7 +173,7 @@ export function CompaniesGrid({ companies, pagination }: CompaniesGridProps) {
             {/* Previous Page */}
             {pagination.page > 1 && (
               <Link
-                href={`?page=${pagination.page - 1}`}
+                href={createPageUrl(pagination.page - 1)}
                 className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
                 السابق
@@ -175,7 +187,7 @@ export function CompaniesGrid({ companies, pagination }: CompaniesGridProps) {
                 return (
                   <Link
                     key={pageNum}
-                    href={`?page=${pageNum}`}
+                    href={createPageUrl(pageNum)}
                     className={`px-3 py-2 text-sm font-medium rounded-md ${
                       pageNum === pagination.page
                         ? 'text-blue-600 bg-blue-50 border border-blue-300 dark:bg-blue-900/50 dark:text-blue-400 dark:border-blue-600'
@@ -192,7 +204,7 @@ export function CompaniesGrid({ companies, pagination }: CompaniesGridProps) {
             {/* Next Page */}
             {pagination.page < pagination.totalPages && (
               <Link
-                href={`?page=${pagination.page + 1}`}
+                href={createPageUrl(pagination.page + 1)}
                 className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
                 التالي
