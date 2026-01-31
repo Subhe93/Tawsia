@@ -5,8 +5,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getSubcategoryBySlug, getCompanies, getCategoryBySlug, getAllCountries } from '@/lib/database/queries';
 import { CategoryHeader } from '@/components/category-header';
-import { CompaniesGrid } from '@/components/companies-grid';
-import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
+import { SubcategoryClientWrapper } from '@/components/subcategory-client-wrapper';
 import { Building2 } from 'lucide-react';
 import { 
   generateItemListSchema,
@@ -233,26 +232,13 @@ export default async function GlobalSubcategoryPage({ params, searchParams = {} 
             )}
           </div>
           
-          <div className="mt-12">
-          <AdvancedSearchFilters 
-            filterOptions={{ countries: allCountries, categories: [], cities: [], subAreas: [], subCategories: [] }}
-            initialValues={{
-              country: searchParams?.country,
-              city: searchParams?.city,
-              rating: searchParams?.rating,
-              verified: searchParams?.verified,
-              q: searchParams?.search,
-              sort: searchParams?.sort,
-            }}
+          <SubcategoryClientWrapper
+            allCountries={allCountries}
+            categorySlug={params.category}
+            subCategorySlug={params.subcategory}
+            searchParams={searchParams}
+            companiesResult={companiesResult}
           />
-          </div>
-
-          <div className="mt-8">
-            <CompaniesGrid 
-              companies={companiesResult.data || []}
-              pagination={companiesResult.pagination}
-            />
-          </div>
         </div>
       </>
     );

@@ -54,6 +54,7 @@ interface AdvancedSearchFiltersProps {
   filterOptions?: FilterOptions;
   redirectToSearch?: boolean; // When true, clicking "فلاتر متقدمة" redirects to /search with current filters
   categorySlug?: string; // Used when redirecting to search page
+  subCategorySlug?: string; // Used when redirecting to search page from subcategory
   initialValues?: {
     q?: string;
     country?: string;
@@ -84,6 +85,7 @@ export function AdvancedSearchFilters({
   filterOptions,
   redirectToSearch = false,
   categorySlug,
+  subCategorySlug,
   initialValues,
 }: AdvancedSearchFiltersProps) {
   const router = useRouter();
@@ -157,8 +159,12 @@ export function AdvancedSearchFilters({
     if (selectedCountry) filters.country = selectedCountry;
     if (selectedCity) filters.city = selectedCity;
     if (selectedSubArea) filters.subArea = selectedSubArea;
-    if (selectedCategory) filters.category = selectedCategory;
-    if (selectedSubCategory) filters.subCategory = selectedSubCategory;
+    // Use categorySlug prop if available, otherwise use selected category
+    if (categorySlug) filters.category = categorySlug;
+    else if (selectedCategory) filters.category = selectedCategory;
+    // Use subCategorySlug prop if available, otherwise use selected subcategory
+    if (subCategorySlug) filters.subCategory = subCategorySlug;
+    else if (selectedSubCategory) filters.subCategory = selectedSubCategory;
     if (selectedRating) filters.rating = selectedRating;
     if (isVerified) filters.verified = true;
     if (isFeatured) filters.featured = true;
@@ -221,14 +227,15 @@ export function AdvancedSearchFilters({
   }, []); // فقط عند التحميل الأول
 
   // تطبيق الفلاتر عند تغيير البحث فقط (للبحث الفوري)
+  // تعطيل البحث التلقائي في صفحات الفئات (عندما redirectToSearch = true)
   useEffect(() => {
-    if (searchQuery) {
+    if (searchQuery && !redirectToSearch) {
       const timer = setTimeout(() => {
         applyFilters();
       }, 500); // debounce
       return () => clearTimeout(timer);
     }
-  }, [searchQuery]);
+  }, [searchQuery, redirectToSearch]);
 
   // الحصول على القوائم المفلترة
   const allCities = cities || [];
@@ -278,14 +285,24 @@ export function AdvancedSearchFilters({
           className="w-full pr-12 pl-4 py-4 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={(e) => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              if (redirectToSearch) {
-                // Redirect to search page with current filters
+              e.preventDefault();
+              if (redirectToSearch && categorySlug) {
+                // Redirect to search page with current filters (from category/subcategory pages)
                 const params = new URLSearchParams();
                 if (searchQuery) params.set('q', searchQuery);
                 if (selectedCountry) params.set('country', selectedCountry);
-                if (categorySlug) params.set('category', categorySlug);
+                params.set('category', categorySlug);
+                if (subCategorySlug) params.set('subCategory', subCategorySlug);
+                params.set('sort', 'rating');
+                params.set('filters', 'open');
+                router.push(`/search?${params.toString()}`);
+              } else if (redirectToSearch) {
+                // Redirect to search page without category (shouldn't happen normally)
+                const params = new URLSearchParams();
+                if (searchQuery) params.set('q', searchQuery);
+                if (selectedCountry) params.set('country', selectedCountry);
                 params.set('sort', 'rating');
                 params.set('filters', 'open');
                 router.push(`/search?${params.toString()}`);
@@ -303,12 +320,21 @@ export function AdvancedSearchFilters({
           variant={isExpanded ? "default" : "outline"}
           size="sm"
           onClick={() => {
-            if (redirectToSearch) {
-              // Redirect to search page with current filters
+            if (redirectToSearch && categorySlug) {
+              // Redirect to search page with current filters (from category/subcategory pages)
               const params = new URLSearchParams();
               if (searchQuery) params.set('q', searchQuery);
               if (selectedCountry) params.set('country', selectedCountry);
-              if (categorySlug) params.set('category', categorySlug);
+              params.set('category', categorySlug);
+              if (subCategorySlug) params.set('subCategory', subCategorySlug);
+              params.set('sort', 'rating');
+              params.set('filters', 'open');
+              router.push(`/search?${params.toString()}`);
+            } else if (redirectToSearch) {
+              // Redirect to search page without category (shouldn't happen normally)
+              const params = new URLSearchParams();
+              if (searchQuery) params.set('q', searchQuery);
+              if (selectedCountry) params.set('country', selectedCountry);
               params.set('sort', 'rating');
               params.set('filters', 'open');
               router.push(`/search?${params.toString()}`);
