@@ -466,7 +466,7 @@ export function AdvancedSearchFilters({
                     <option value="">جميع الدول</option>
                     {(countries || []).map((country) => (
                       <option key={country.code} value={country.code}>
-                        {country.name} ({country.companiesCount})
+                        {country.name}
                       </option>
                     ))}
                   </select>
@@ -483,7 +483,7 @@ export function AdvancedSearchFilters({
                     <option value="">جميع المدن</option>
                     {filteredCities.map((city) => (
                       <option key={city.slug} value={city.slug}>
-                        {city.name} ({city.companiesCount})
+                        {city.name}
                       </option>
                     ))}
                   </select>
@@ -499,7 +499,7 @@ export function AdvancedSearchFilters({
                       <option value="">جميع المناطق الفرعية</option>
                       {filteredSubAreas.map((subArea) => (
                         <option key={subArea.slug} value={subArea.slug}>
-                          {subArea.name} ({subArea.companiesCount})
+                          {subArea.name}
                         </option>
                       ))}
                     </select>
@@ -543,7 +543,7 @@ export function AdvancedSearchFilters({
                     <option value="">جميع الفئات الفرعية</option>
                     {filteredSubCategories.map((subCategory) => (
                       <option key={subCategory.slug} value={subCategory.slug}>
-                        {subCategory.name} ({subCategory.companiesCount})
+                        {subCategory.name}
                       </option>
                     ))}
                   </select>
@@ -722,7 +722,10 @@ export function AdvancedSearchFilters({
               مسح الفلاتر
             </Button>
             <Button 
-              onClick={applyFilters}
+              onClick={() => {
+                applyFilters();
+                setIsExpanded(false);
+              }}
               className="bg-gradient-to-r from-brand-green to-brand-yellow hover:from-brand-green/90 hover:to-brand-yellow/90 text-white"
             >
               تطبيق الفلاتر
