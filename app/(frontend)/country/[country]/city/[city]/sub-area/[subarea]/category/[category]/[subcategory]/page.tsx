@@ -7,8 +7,7 @@ import Link from 'next/link';
 import { getSubcategoryBySlug, getCompanies, getCategoryBySlug, getCountryByCode, getCityBySlug, getSubAreaBySlug } from '@/lib/database/queries';
 
 import { CategoryHeader } from '@/components/category-header';
-import { CompaniesGrid } from '@/components/companies-grid';
-import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
+import { SubAreaSubcategoryClientWrapper } from '@/components/sub-area/sub-area-subcategory-client-wrapper';
 import { Building2 } from 'lucide-react';
 import { 
   generateItemListSchema,
@@ -283,29 +282,20 @@ export default async function SubAreaSubcategoryPage({ params, searchParams = {}
               </span>
             </div>
             
-            <AdvancedSearchFilters 
-              showLocationFilter={false}
-              showCategoryFilter={false}
-              showRatingFilter={true}
-              showPriceFilter={true}
-              showHoursFilter={true}
+            <SubAreaSubcategoryClientWrapper
+              countrySlug={params.country}
+              citySlug={params.city}
+              subAreaSlug={params.subarea}
+              categorySlug={params.category}
+              subCategorySlug={params.subcategory}
+              countryName={countryName}
+              cityName={cityName}
+              subAreaName={subAreaName}
+              categoryName={category.name}
+              subCategoryName={subcategory.name}
+              searchParams={searchParams}
+              companiesResult={companiesResult}
             />
-            
-            {companiesResult.data && companiesResult.data.length > 0 ? (
-              <CompaniesGrid 
-                companies={companiesResult.data} 
-                pagination={companiesResult.pagination}
-              />
-            ) : (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  لا توجد شركات في هذه الفئة الفرعية في {subAreaName} حالياً
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  يرجى المحاولة مرة أخرى لاحقاً أو تصفح فئات أخرى
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </>
