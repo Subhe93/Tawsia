@@ -61,6 +61,8 @@ interface AdvancedSearchFiltersProps {
   countryName?: string; // Display name for country (used in city page)
   cityName?: string; // Display name for city (used in city page)
   subAreaName?: string; // Display name for subArea (used in subArea page)
+  categoryName?: string; // Display name for category
+  subCategoryName?: string; // Display name for subcategory
   initialValues?: {
     q?: string;
     country?: string;
@@ -98,6 +100,8 @@ export function AdvancedSearchFilters({
   countryName,
   cityName,
   subAreaName,
+  categoryName,
+  subCategoryName,
   initialValues,
 }: AdvancedSearchFiltersProps) {
   const router = useRouter();
@@ -389,7 +393,16 @@ export function AdvancedSearchFilters({
           </Badge>
         )}
 
-        {selectedCategory && (
+        {/* Show fixed category badge when categorySlug and categoryName props are passed */}
+        {categorySlug && categoryName && (
+          <Badge variant="default" className="flex items-center bg-green-600">
+            <Building2 className="h-3 w-3 ml-1" />
+            {categoryName}
+          </Badge>
+        )}
+
+        {/* Show removable category badge when selected by user (not from prop) */}
+        {selectedCategory && !categorySlug && (
           <Badge variant="secondary" className="flex items-center">
             <Building2 className="h-3 w-3 ml-1" />
             {(categories || []).find(c => c.slug === selectedCategory)?.name || 'فئة'}
@@ -460,7 +473,16 @@ export function AdvancedSearchFilters({
           </Badge>
         )}
 
-        {selectedSubCategory && (
+        {/* Show fixed subCategory badge when subCategorySlug and subCategoryName props are passed */}
+        {subCategorySlug && subCategoryName && (
+          <Badge variant="default" className="flex items-center bg-green-600">
+            <Building2 className="h-3 w-3 ml-1" />
+            {subCategoryName}
+          </Badge>
+        )}
+
+        {/* Show removable subCategory badge when selected by user (not from prop) */}
+        {selectedSubCategory && !subCategorySlug && (
           <Badge variant="secondary" className="flex items-center">
             <Building2 className="h-3 w-3 ml-1" />
             {allSubCategories.find(s => s.slug === selectedSubCategory)?.name || 'فئة فرعية'}
