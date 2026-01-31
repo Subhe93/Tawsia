@@ -5,8 +5,7 @@ import { applySeoOverride } from '@/lib/seo/overrides'
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCityBySlug, getCompanies, getCategories, getSubAreas } from '@/lib/database/queries';
-import { CompaniesGrid } from '@/components/companies-grid';
-import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
+import { CityClientWrapper } from '@/components/city-client-wrapper';
 import { ServicesCategoriesCompact } from '@/components/services-categories-compact';
 import { SubAreasGrid } from '@/components/sub-area/sub-areas-grid';
 import { CountryAutoSelect } from '@/components/company/country-auto-select';
@@ -297,29 +296,15 @@ export default async function CityPage({ params, searchParams = {} }: CityPagePr
               </span>
             </div>
          
-            <AdvancedSearchFilters 
-              showLocationFilter={false}
-              showCategoryFilter={true}
-              showRatingFilter={true}
-              showPriceFilter={true}
-              showHoursFilter={true}
+            <CityClientWrapper
+              countrySlug={params.country}
+              citySlug={params.city}
+              countryName={countryName}
+              cityName={cityName}
+              searchParams={searchParams}
+              companiesResult={companiesResult}
+              categories={categories}
             />
-            
-            {companiesResult.data && companiesResult.data.length > 0 ? (
-              <CompaniesGrid 
-                companies={companiesResult.data} 
-                pagination={companiesResult.pagination}
-              />
-            ) : (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  لا توجد شركات في {cityName} حالياً
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  يرجى المحاولة مرة أخرى لاحقاً أو تصفح مدن أخرى
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </>
