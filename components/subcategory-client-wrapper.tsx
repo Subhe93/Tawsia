@@ -19,7 +19,9 @@ interface Country {
 interface SubcategoryClientWrapperProps {
   allCountries: Country[];
   categorySlug: string;
+  categoryName: string;
   subCategorySlug: string;
+  subCategoryName: string;
   searchParams?: any;
   companiesResult: any;
 }
@@ -27,12 +29,19 @@ interface SubcategoryClientWrapperProps {
 export function SubcategoryClientWrapper({
   allCountries,
   categorySlug,
+  categoryName,
   subCategorySlug,
+  subCategoryName,
   searchParams,
   companiesResult,
 }: SubcategoryClientWrapperProps) {
   const router = useRouter();
   const { selectedCountry, setSelectedCountry } = useCountry();
+
+  // Find the country name from the country code in searchParams
+  const countryFromParams = searchParams?.country 
+    ? allCountries.find(c => c.code === searchParams.country)
+    : null;
 
   // Auto-select country and sync with URL
   useEffect(() => {
@@ -98,7 +107,11 @@ export function SubcategoryClientWrapper({
           }}
           redirectToSearch={true}
           categorySlug={categorySlug}
+          categoryName={categoryName}
           subCategorySlug={subCategorySlug}
+          subCategoryName={subCategoryName}
+          countrySlug={countryFromParams?.code}
+          countryName={countryFromParams?.name}
           initialValues={{
             country: searchParams?.country || selectedCountry?.code,
             city: searchParams?.city,

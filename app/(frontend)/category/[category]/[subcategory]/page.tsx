@@ -235,7 +235,9 @@ export default async function GlobalSubcategoryPage({ params, searchParams = {} 
           <SubcategoryClientWrapper
             allCountries={allCountries}
             categorySlug={params.category}
+            categoryName={category.name}
             subCategorySlug={params.subcategory}
+            subCategoryName={subcategory.name}
             searchParams={searchParams}
             companiesResult={companiesResult}
           />
