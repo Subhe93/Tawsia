@@ -52,6 +52,8 @@ interface AdvancedSearchFiltersProps {
   showPriceFilter?: boolean;
   showHoursFilter?: boolean;
   filterOptions?: FilterOptions;
+  redirectToSearch?: boolean; // When true, clicking "فلاتر متقدمة" redirects to /search with current filters
+  categorySlug?: string; // Used when redirecting to search page
   initialValues?: {
     q?: string;
     country?: string;
@@ -80,6 +82,8 @@ export function AdvancedSearchFilters({
   showPriceFilter = true,
   showHoursFilter = true,
   filterOptions,
+  redirectToSearch = false,
+  categorySlug,
   initialValues,
 }: AdvancedSearchFiltersProps) {
   const router = useRouter();
@@ -125,7 +129,8 @@ export function AdvancedSearchFilters({
   const [hasWorkingHours, setHasWorkingHours] = useState(initialValues?.hasWorkingHours === 'true');
   const [sortBy, setSortBy] = useState(initialValues?.sort || 'rating');
   const [openNow, setOpenNow] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  // Check if filters should be expanded by default (when redirected from category page)
+  const [isExpanded, setIsExpanded] = useState(searchParams.get('filters') === 'open');
   
   // جلب المدن عند تغيير البلد المحدد (فقط إذا لم يتم تمرير filterOptions)
   useEffect(() => {
@@ -275,7 +280,18 @@ export function AdvancedSearchFilters({
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={(e) => {
             if (e.key === 'Enter') {
-              applyFilters();
+              if (redirectToSearch) {
+                // Redirect to search page with current filters
+                const params = new URLSearchParams();
+                if (searchQuery) params.set('q', searchQuery);
+                if (selectedCountry) params.set('country', selectedCountry);
+                if (categorySlug) params.set('category', categorySlug);
+                params.set('sort', 'rating');
+                params.set('filters', 'open');
+                router.push(`/search?${params.toString()}`);
+              } else {
+                applyFilters();
+              }
             }
           }}
         />
@@ -286,7 +302,20 @@ export function AdvancedSearchFilters({
         <Button
           variant={isExpanded ? "default" : "outline"}
           size="sm"
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={() => {
+            if (redirectToSearch) {
+              // Redirect to search page with current filters
+              const params = new URLSearchParams();
+              if (searchQuery) params.set('q', searchQuery);
+              if (selectedCountry) params.set('country', selectedCountry);
+              if (categorySlug) params.set('category', categorySlug);
+              params.set('sort', 'rating');
+              params.set('filters', 'open');
+              router.push(`/search?${params.toString()}`);
+            } else {
+              setIsExpanded(!isExpanded);
+            }
+          }}
           className="flex items-center"
         >
           <Filter className="h-4 w-4 ml-2" />

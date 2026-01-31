@@ -116,6 +116,8 @@ export function CategoryClientWrapper({
             subAreas: [], 
             subCategories: [] 
           }}
+          redirectToSearch={true}
+          categorySlug={categorySlug}
           initialValues={{
             country: searchParams?.country || selectedCountry?.code,
             city: searchParams?.city,
