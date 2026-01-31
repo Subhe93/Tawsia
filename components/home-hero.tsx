@@ -170,7 +170,7 @@ export function HomeHero({ stats, selectedCountry: initialCountryCode }: HomeHer
               <div className="flex-1">
                 <input
                   type="text"
-                  placeholder="ابحث عن شركة، خدمة، أو مدينة..."
+                  placeholder="ابحث عن شركة..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
