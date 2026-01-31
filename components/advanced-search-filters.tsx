@@ -179,7 +179,8 @@ export function AdvancedSearchFilters({
 
   const clearFilters = () => {
     setSearchQuery('');
-    setSelectedCountry('');
+    // Keep the selected country - don't clear it
+    // setSelectedCountry('');
     setSelectedCity('');
     setSelectedSubArea('');
     setSelectedCategory('');
@@ -196,9 +197,14 @@ export function AdvancedSearchFilters({
     setOpenNow(false);
     
     if (onFiltersChange) {
-      onFiltersChange({});
+      onFiltersChange({ country: selectedCountry });
     } else {
-      router.push('/search');
+      // Keep country in URL when clearing other filters
+      if (selectedCountry) {
+        router.push(`/search?country=${selectedCountry}`);
+      } else {
+        router.push('/search');
+      }
     }
   };
 
@@ -521,7 +527,7 @@ export function AdvancedSearchFilters({
                   <option value="">جميع الفئات</option>
                   {(categories || []).map((category) => (
                     <option key={category.slug} value={category.slug}>
-                      {category.name} ({category.companiesCount})
+                      {category.name}
                     </option>
                   ))}
                 </select>
