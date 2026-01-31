@@ -73,6 +73,11 @@ export function HomeHero({ stats, selectedCountry: initialCountryCode }: HomeHer
   }, []);
 
   const handleSearch = () => {
+    // لا تفعل شيء إذا كان حقل البحث فارغ
+    if (!searchQuery.trim()) {
+      return;
+    }
+    
     // إنشاء معاملات البحث
     const searchParams = new URLSearchParams();
     
@@ -89,9 +94,23 @@ export function HomeHero({ stats, selectedCountry: initialCountryCode }: HomeHer
     }
     
     // توجيه المستخدم إلى صفحة البحث
-    const url = selectedCountry && !searchQuery.trim()
-      ? `/${selectedCountry}${selectedCategory ? `/category/${selectedCategory}` : ''}`
-      : `/search${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+    // إذا كان هناك بلد ولا يوجد نص بحث، نذهب إلى صفحة البلد
+    // وإلا نذهب إلى صفحة البحث مع المعاملات
+    let url: string;
+    
+    if (selectedCountry && !searchQuery.trim() && !selectedCategory) {
+      // بلد فقط بدون نص بحث أو فئة
+      url = `/country/${selectedCountry}`;
+    } else if (selectedCountry && !searchQuery.trim() && selectedCategory) {
+      // بلد وفئة بدون نص بحث
+      url = `/country/${selectedCountry}?category=${selectedCategory}`;
+    } else if (searchParams.toString()) {
+      // هناك معاملات بحث
+      url = `/search?${searchParams.toString()}`;
+    } else {
+      // لا يوجد أي معاملات - نذهب إلى صفحة البحث فقط
+      url = `/search`;
+    }
     
     router.push(url);
   };
