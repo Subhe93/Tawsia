@@ -6,8 +6,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { CountryHeader } from '@/components/country-header';
 import { CitiesGrid } from '@/components/cities-grid';
-import { CompaniesGrid } from '@/components/companies-grid';
-import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
+import { CountryClientWrapper } from '@/components/country-client-wrapper';
 import { CountryAutoSelect } from '@/components/company/country-auto-select';
 import { 
   getCountryByCode, 
@@ -149,23 +148,11 @@ export default async function CountryPage({ params, searchParams = {} }: Country
               </span>
             </div>
             
-            <AdvancedSearchFilters   
-              showLocationFilter={false}
-              showCategoryFilter={true}
-              showRatingFilter={true}
-              showPriceFilter={true}
-              showHoursFilter={true}
-              filterOptions={filterOptions} 
-            />
-            
-            <CompaniesGrid 
-              companies={companiesResult.companies} 
-              pagination={{
-                page: filters.page,
-                limit: 20,
-                total: companiesResult.totalCount,
-                totalPages: companiesResult.totalPages
-              }}
+            <CountryClientWrapper
+              companiesResult={companiesResult}
+              filterOptions={filterOptions}
+              countrySlug={params.country}
+              countryName={countryData.name}
             />
           </div>
         </div>
