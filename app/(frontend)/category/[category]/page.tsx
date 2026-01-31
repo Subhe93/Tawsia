@@ -192,6 +192,7 @@ export default async function GlobalCategoryPage({ params, searchParams = {} }: 
             allCountries={allCountries}
             subcategories={subcategories}
             categorySlug={params.category}
+            categoryName={category.name}
             searchParams={searchParams}
             companiesResult={companiesResult}
           />
