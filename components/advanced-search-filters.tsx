@@ -57,8 +57,10 @@ interface AdvancedSearchFiltersProps {
   subCategorySlug?: string; // Used when redirecting to search page from subcategory
   countrySlug?: string; // Used when redirecting to search page from city page
   citySlug?: string; // Used when redirecting to search page from city page
+  subAreaSlug?: string; // Used when redirecting to search page from subArea page
   countryName?: string; // Display name for country (used in city page)
   cityName?: string; // Display name for city (used in city page)
+  subAreaName?: string; // Display name for subArea (used in subArea page)
   initialValues?: {
     q?: string;
     country?: string;
@@ -92,8 +94,10 @@ export function AdvancedSearchFilters({
   subCategorySlug,
   countrySlug,
   citySlug,
+  subAreaSlug,
   countryName,
   cityName,
+  subAreaName,
   initialValues,
 }: AdvancedSearchFiltersProps) {
   const router = useRouter();
@@ -170,7 +174,9 @@ export function AdvancedSearchFilters({
     // Use citySlug prop if available, otherwise use selected city
     if (citySlug) filters.city = citySlug;
     else if (selectedCity) filters.city = selectedCity;
-    if (selectedSubArea) filters.subArea = selectedSubArea;
+    // Use subAreaSlug prop if available, otherwise use selected subArea
+    if (subAreaSlug) filters.subArea = subAreaSlug;
+    else if (selectedSubArea) filters.subArea = selectedSubArea;
     // Use categorySlug prop if available, otherwise use selected category
     if (categorySlug) filters.category = categorySlug;
     else if (selectedCategory) filters.category = selectedCategory;
@@ -301,7 +307,7 @@ export function AdvancedSearchFilters({
             if (e.key === 'Enter') {
               e.preventDefault();
               if (redirectToSearch) {
-                // Redirect to search page with current filters (from category/subcategory/city pages)
+                // Redirect to search page with current filters (from category/subcategory/city/subArea pages)
                 const params = new URLSearchParams();
                 if (searchQuery) params.set('q', searchQuery);
                 // Use prop slugs if available, otherwise use selected values
@@ -309,6 +315,8 @@ export function AdvancedSearchFilters({
                 else if (selectedCountry) params.set('country', selectedCountry);
                 if (citySlug) params.set('city', citySlug);
                 else if (selectedCity) params.set('city', selectedCity);
+                if (subAreaSlug) params.set('subArea', subAreaSlug);
+                else if (selectedSubArea) params.set('subArea', selectedSubArea);
                 if (categorySlug) params.set('category', categorySlug);
                 else if (selectedCategory) params.set('category', selectedCategory);
                 if (subCategorySlug) params.set('subCategory', subCategorySlug);
@@ -331,7 +339,7 @@ export function AdvancedSearchFilters({
           size="sm"
           onClick={() => {
             if (redirectToSearch) {
-              // Redirect to search page with current filters (from category/subcategory/city pages)
+              // Redirect to search page with current filters (from category/subcategory/city/subArea pages)
               const params = new URLSearchParams();
               if (searchQuery) params.set('q', searchQuery);
               // Use prop slugs if available, otherwise use selected values
@@ -339,6 +347,8 @@ export function AdvancedSearchFilters({
               else if (selectedCountry) params.set('country', selectedCountry);
               if (citySlug) params.set('city', citySlug);
               else if (selectedCity) params.set('city', selectedCity);
+              if (subAreaSlug) params.set('subArea', subAreaSlug);
+              else if (selectedSubArea) params.set('subArea', selectedSubArea);
               if (categorySlug) params.set('category', categorySlug);
               else if (selectedCategory) params.set('category', selectedCategory);
               if (subCategorySlug) params.set('subCategory', subCategorySlug);
@@ -430,7 +440,16 @@ export function AdvancedSearchFilters({
           </Badge>
         )}
 
-        {selectedSubArea && (
+        {/* Show fixed subArea badge when subAreaSlug prop is passed (subArea page) */}
+        {subAreaSlug && subAreaName && (
+          <Badge variant="default" className="flex items-center bg-blue-600">
+            <MapPin className="h-3 w-3 ml-1" />
+            {subAreaName}
+          </Badge>
+        )}
+
+        {/* Show removable subArea badge when selected by user (not from prop) */}
+        {selectedSubArea && !subAreaSlug && (
           <Badge variant="secondary" className="flex items-center">
             <MapPin className="h-3 w-3 ml-1" />
             {allSubAreas.find(s => s.slug === selectedSubArea)?.name || 'منطقة'}

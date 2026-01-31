@@ -6,8 +6,7 @@ import Link from 'next/link';
 import { getSubAreaBySlug, getCompanies, getCountryByCode, getCityBySlug, getCategories } from '@/lib/database/queries';
 import { applySeoOverride } from '@/lib/seo/overrides'
 
-import { CompaniesGrid } from '@/components/companies-grid';
-import { AdvancedSearchFilters } from '@/components/advanced-search-filters';
+import { SubAreaClientWrapper } from '@/components/sub-area/sub-area-client-wrapper';
 import { ServicesCategoriesCompact } from '@/components/services-categories-compact';
 import { 
   generateItemListSchema,
@@ -307,29 +306,17 @@ export default async function SubAreaPage({ params, searchParams = {} }: SubArea
               </span>
             </div>
          
-            <AdvancedSearchFilters 
-              showLocationFilter={false}
-              showCategoryFilter={true}
-              showRatingFilter={true}
-              showPriceFilter={true}
-              showHoursFilter={true}
+            <SubAreaClientWrapper
+              countrySlug={params.country}
+              citySlug={params.city}
+              subAreaSlug={params.subarea}
+              countryName={countryName}
+              cityName={cityName}
+              subAreaName={subAreaName}
+              searchParams={searchParams}
+              companiesResult={companiesResult}
+              categories={categories}
             />
-            
-            {companiesResult.data && companiesResult.data.length > 0 ? (
-              <CompaniesGrid 
-                companies={companiesResult.data} 
-                pagination={companiesResult.pagination}
-              />
-            ) : (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  لا توجد شركات في {subAreaName} حالياً
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  يرجى المحاولة مرة أخرى لاحقاً أو تصفح مناطق أخرى
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </>
