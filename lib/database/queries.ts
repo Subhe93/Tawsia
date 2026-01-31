@@ -210,7 +210,7 @@ export async function getSubcategoryBySlug(slug: string) {
 // استعلامات الشركات
 
 export async function getCompanies(
-  filters: SearchFilters = {}
+  filters: SearchFilters = {},
 ): Promise<SearchResult<CompanyWithRelations>> {
   const {
     query,
@@ -297,6 +297,7 @@ export async function getCompanies(
         city: true,
         subArea: true,
         category: true,
+        subCategory: true,
         images: {
           where: { isActive: true },
           orderBy: { sortOrder: "asc" },
@@ -351,7 +352,7 @@ export async function getCompanies(
 }
 
 export async function getCompanyBySlug(
-  slug: string
+  slug: string,
 ): Promise<CompanyWithRelations | null> {
   const company = await prisma.company.findUnique({
     where: { slug },
@@ -413,14 +414,14 @@ export async function getCompanyBySlug(
     return {
       ...company,
       workingHours,
-    } as CompanyWithRelations;
+    } as unknown as CompanyWithRelations;
   } catch (error) {
     console.error("خطأ في جلب ساعات العمل للشركة:", error);
     // إرجاع الشركة بدون ساعات العمل في حالة الخطأ
     return {
       ...company,
       workingHours: [],
-    } as CompanyWithRelations;
+    } as unknown as CompanyWithRelations;
   }
 }
 
@@ -452,7 +453,7 @@ export async function getSimilarCompanies(
   companySlug: string,
   categoryId: string,
   cityId: string,
-  limit: number = 4
+  limit: number = 4,
 ) {
   return await prisma.company.findMany({
     where: {
@@ -480,7 +481,7 @@ export async function getSimilarCompanies(
 // استعلامات المراجعات
 export async function getReviews(
   companyId?: string,
-  filters: SearchFilters = {}
+  filters: SearchFilters = {},
 ): Promise<SearchResult<ReviewWithRelations>> {
   const { page = 1, limit = 10, sortBy = "newest" } = filters;
 
@@ -492,19 +493,19 @@ export async function getReviews(
   };
 
   const orderBy: Prisma.ReviewOrderByWithRelationInput = (() => {
-    switch (sortBy) {
+    switch (sortBy as string) {
       case "newest":
-        return { createdAt: "desc" };
+        return { createdAt: "desc" as const };
       case "oldest":
-        return { createdAt: "asc" };
+        return { createdAt: "asc" as const };
       case "highest":
-        return { rating: "desc" };
+        return { rating: "desc" as const };
       case "lowest":
-        return { rating: "asc" };
+        return { rating: "asc" as const };
       case "helpful":
-        return { helpfulCount: "desc" };
+        return { helpfulCount: "desc" as const };
       default:
-        return { createdAt: "desc" };
+        return { createdAt: "desc" as const };
     }
   })();
 
@@ -564,7 +565,7 @@ export async function getReviews(
   ]);
 
   return {
-    data: reviews,
+    data: reviews as unknown as ReviewWithRelations[],
     pagination: {
       page,
       limit,
@@ -682,7 +683,7 @@ export async function recalculateAllCompanyRatings() {
 // البحث المتقدم
 export async function searchCompanies(
   searchTerm: string,
-  filters: SearchFilters = {}
+  filters: SearchFilters = {},
 ) {
   const searchWords = searchTerm.trim().split(/\s+/);
 
@@ -783,7 +784,7 @@ export async function getCompanyStats(companyId: string) {
 
 // إنشاء طلب شركة جديدة
 export async function createCompanyRequest(
-  data: Prisma.CompanyRequestCreateInput
+  data: Prisma.CompanyRequestCreateInput,
 ) {
   return await prisma.companyRequest.create({
     data,
@@ -794,7 +795,7 @@ export async function createCompanyRequest(
 export async function getCompanyRequests(
   status?: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ) {
   const skip = (page - 1) * limit;
 
@@ -826,7 +827,7 @@ export async function getCompanyRequests(
 // الموافقة على طلب شركة
 export async function approveCompanyRequest(
   requestId: string,
-  adminId: string
+  adminId: string,
 ) {
   const request = await prisma.companyRequest.findUnique({
     where: { id: requestId },
@@ -936,7 +937,7 @@ export async function approveCompanyRequest(
 export async function rejectCompanyRequest(
   requestId: string,
   adminId: string,
-  reason: string
+  reason: string,
 ) {
   return await prisma.companyRequest.update({
     where: { id: requestId },

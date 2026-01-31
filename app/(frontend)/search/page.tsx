@@ -71,8 +71,18 @@ async function SearchResults({ searchParams }: { searchParams: SearchPageProps['
     category: searchParams?.category,
     subCategory: searchParams?.subCategory,
     rating: searchParams?.rating ? parseFloat(searchParams.rating) : undefined,
-    verified: searchParams?.verified === 'true',
-    featured: searchParams?.featured === 'true',
+    // Only set verified/featured filters when explicitly set to 'true'
+    // When not set, leave as undefined to return ALL companies (verified + unverified, featured + unfeatured)
+    verified: searchParams?.verified === 'true' ? true : undefined,
+    featured: searchParams?.featured === 'true' ? true : undefined,
+    // Additional optional filters
+    hasWebsite: searchParams?.hasWebsite === 'true' ? true : undefined,
+    hasPhone: searchParams?.hasPhone === 'true' ? true : undefined,
+    hasEmail: searchParams?.hasEmail === 'true' ? true : undefined,
+    hasImages: searchParams?.hasImages === 'true' ? true : undefined,
+    hasWorkingHours: searchParams?.hasWorkingHours === 'true' ? true : undefined,
+    sortBy: searchParams?.sort as 'name' | 'rating' | 'reviews' | 'newest' | 'oldest' | undefined,
+    page: searchParams?.page ? parseInt(searchParams.page) : 1,
   };
 
   const companiesResult = await getCompanies(filters);

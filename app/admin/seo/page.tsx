@@ -888,7 +888,7 @@ export default function AdminSeoPage() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="max-w-xs truncate font-medium text-sm  max-w-[100px]">
+                            <div className="max-w-[100px] truncate font-medium text-sm">
                               {item.title}
                             </div>
                           </TableCell>

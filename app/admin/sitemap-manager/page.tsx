@@ -251,7 +251,7 @@ export default function SitemapManagerPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Badge variant="success">✓ مؤرشفة</Badge>
+            <Badge variant="secondary" className="bg-green-100 text-green-800">✓ مؤرشفة</Badge>
           </CardContent>
         </Card>
 
@@ -725,11 +725,11 @@ function SitemapGenerator() {
                 <p className="text-xl font-bold">{analysisResult.total}</p>
               </div>
               <div className="p-3 bg-white rounded border">
-                <p className="text-gray-500 text-xs text-green-600">روابط موجودة</p>
+                <p className="text-xs text-green-600">روابط موجودة</p>
                 <p className="text-xl font-bold text-green-600">{analysisResult.existing}</p>
               </div>
               <div className="p-3 bg-white rounded border">
-                <p className="text-gray-500 text-xs text-blue-600">روابط جديدة ستضاف</p>
+                <p className="text-xs text-blue-600">روابط جديدة ستضاف</p>
                 <p className="text-xl font-bold text-blue-600">{analysisResult.new}</p>
               </div>
             </div>
