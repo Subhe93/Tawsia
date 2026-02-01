@@ -652,7 +652,7 @@ function generateWidgetHTML(params: {
       </a>
     </div>
     <!-- Row 4: Disclaimer text for mobile -->
-    <p style="font-size: 9px; color: ${colors.textSecondary}; margin: 8px 0 0 0; line-height: 1.4; text-align: center;">
+    <p style="font-size: 9px; color: ${colors.textSecondary}; margin: 8px 0 0 0; line-height: 1.4; text-align: right;">
       يمكن التحقق من صحة الاتصال عبر نظام إدارة الأعمال، من خلال التحقق من البيانات عبر البريد الإلكتروني أو الرسائل القصيرة.
     </p>
   </div>
@@ -1100,7 +1100,7 @@ function generateVerticalWidget(params: {
 
   // Verification message
   const verificationMessage = `
-    <div style="text-align: center; padding: 8px; font-size: 9px; color: ${colors.textSecondary}; line-height: 1.4;">
+    <div style="text-align: right; padding: 8px; font-size: 9px; color: ${colors.textSecondary}; line-height: 1.4;">
       يمكن التحقق من صحة الاتصال عبر نظام إدارة الأعمال، دون الحاجة إلى معلومات الاتصال الخاصة بشركة twsia من خلال التحقق من البيانات عبر البريد الإلكتروني أو الرسائل القصيرة.
     </div>
   `;
