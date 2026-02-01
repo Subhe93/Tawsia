@@ -242,11 +242,25 @@ function generateWidgetHTML(params: {
       }; display: flex; flex-direction: column; flex-shrink: 0; text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; ${
         size === "m" ? "justify-content: center; align-items: center;" : ""
       }">
-        <div style="display: flex; align-items: center; margin-bottom: ${
-          size === "m" ? "0" : "2px"
-        };">
-          ${generateStars(review.rating, colors.star, size === "m" ? 12 : 14)}
+        ${
+          size === "xl"
+            ? `<!-- Mobile: stars + name in one row -->
+        <div class="review-header-mobile" style="display: none; align-items: center; gap: 8px; margin-bottom: 4px;">
+          ${generateStars(review.rating, colors.star, 12)}
+          <span style="font-size: 11px; font-weight: 600; color: ${colors.text}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            ${escapeHtml(review.userName || review.user?.name || "مستخدم غير معروف")}
+          </span>
         </div>
+        <!-- Desktop: stars only -->
+        <div class="review-header-desktop" style="display: flex; align-items: center; margin-bottom: 2px;">
+          ${generateStars(review.rating, colors.star, 14)}
+        </div>`
+            : `<div style="display: flex; align-items: center; margin-bottom: ${
+                size === "m" ? "0" : "2px"
+              };">
+          ${generateStars(review.rating, colors.star, size === "m" ? 12 : 14)}
+        </div>`
+        }
     
         ${
           size === "xl"
@@ -277,7 +291,7 @@ function generateWidgetHTML(params: {
         }
         ${
           size === "l" || size === "xl"
-            ? `<div style="display: flex; align-items: center; margin-top: auto; gap: 4px; padding-top: 4px; border-top: 1px solid ${
+            ? `<div class="review-footer" style="display: flex; align-items: center; margin-top: auto; gap: 4px; padding-top: 4px; border-top: 1px solid ${
                 colors.border
               };">
 
@@ -288,28 +302,30 @@ function generateWidgetHTML(params: {
               <span>${escapeHtml(
                 review.userName || review.user?.name || "مستخدم غير معروف",
               )}</span>
-              <span style="font-size: 10px; color: ${
+              <span class="review-date" style="font-size: 10px; color: ${
                 colors.textSecondary
               }; font-weight: 400;">
                 ${formatDate(review.createdAt)}
               </span>
             </div>
-            ${
+            <div class="review-verified" style="${
               review.isVerified
-                ? `<div style="font-size: 10px; color: #3b82f6; margin-top: 2px; display: flex; align-items: center; gap: 3px;">
-              <span>موثق</span>
+                ? `font-size: 10px; color: #3b82f6; margin-top: 2px; display: flex; align-items: center; gap: 3px;`
+                : `font-size: 10px; color: #ef4444; margin-top: 2px; display: flex; align-items: center; gap: 3px;`
+            }">
+              ${
+                review.isVerified
+                  ? `<span>موثق</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="3" xmlns="http://www.w3.org/2000/svg">
                 <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </div>`
-                : `<div style="font-size: 10px; color: #ef4444; margin-top: 2px; display: flex; align-items: center; gap: 3px;">
-              <span>غير موثق</span>
+              </svg>`
+                  : `<span>غير موثق</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" xmlns="http://www.w3.org/2000/svg">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </div>`
-            }
+              </svg>`
+              }
+            </div>
           </div>
         </div>`
             : ""
@@ -489,6 +505,43 @@ function generateWidgetHTML(params: {
       background: ${colors.logoHover};
       transform: scale(1.1);
     }
+    
+    /* Desktop styles */
+    .summary-desktop { display: flex; }
+    .summary-mobile { display: none; }
+    .review-header-mobile { display: none !important; }
+    .review-header-desktop { display: flex !important; }
+    .review-footer { display: flex !important; }
+    .review-date { display: inline !important; }
+    .review-verified { display: flex !important; }
+    
+    /* Mobile styles for XL size */
+    @media (max-width: 600px) {
+      .slider-container {
+        min-height: 110px !important;
+      }
+      .review-slide {
+        width: 160px !important;
+        min-height: 100px !important;
+        padding: 8px !important;
+      }
+      .review-header-mobile { display: flex !important; }
+      .review-header-desktop { display: none !important; }
+      .review-footer { display: none !important; }
+      .review-date { display: none !important; }
+      .review-verified { display: none !important; }
+      .summary-desktop { display: none !important; }
+      .summary-mobile { display: block !important; }
+      .disclaimer-text { display: none !important; }
+      .slider-btn {
+        width: 32px !important;
+        height: 32px !important;
+      }
+      .slider-btn svg {
+        width: 16px !important;
+        height: 16px !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -496,7 +549,8 @@ function generateWidgetHTML(params: {
   ${
     company.reviews.length > 0
       ? `
-  <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 8px 16px; border-top: 1px solid ${
+  <!-- Desktop Summary -->
+  <div class="summary-desktop" style="display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 8px 16px; border-top: 1px solid ${
     colors.border
   }; background: ${colors.bg}; font-size: 12px;">
     <div style="display: flex; align-items: center; gap: 20px;">
@@ -557,7 +611,53 @@ function generateWidgetHTML(params: {
       </a>
     </div>
   </div>
-  <div style="padding: 6px 16px; background: ${
+  
+  <!-- Mobile Summary - Grid Layout -->
+  <div class="summary-mobile" style="display: none; padding: 10px; border-top: 1px solid ${
+    colors.border
+  }; background: ${colors.bg};">
+    <!-- Row 1: Labels -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center; margin-bottom: 4px;">
+      <span style="color: ${colors.textSecondary}; font-size: 11px;">إجمالي التوصيات</span>
+      <span style="color: ${colors.textSecondary}; font-size: 11px;">متوسط التقييم</span>
+    </div>
+    <!-- Row 2: Values -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center; margin-bottom: 10px;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="${colors.star}" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+        </svg>
+        <span style="font-weight: 600; color: ${colors.text}; font-size: 14px;">${totalReviews}</span>
+      </div>
+      <span style="font-weight: 600; color: ${colors.text}; font-size: 14px;">${averageRating.toFixed(1)}/5</span>
+    </div>
+    <!-- Row 3: Buttons + Logo -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+      <a href="${companyUrl}" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 11px; font-weight: 500;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+        <span>عرض المزيد</span>
+      </a>
+      <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 11px; font-weight: 500;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        <span>اكتب توصية</span>
+      </a>
+      <a href="https://twsia.com" target="_blank" style="display: flex; align-items: center;">
+        <img src="https://twsia.com/img/twsia-logo.png" alt="Tawsia" style="height: 22px; width: auto;" />
+      </a>
+    </div>
+    <!-- Row 4: Disclaimer text for mobile -->
+    <p style="font-size: 9px; color: ${colors.textSecondary}; margin: 8px 0 0 0; line-height: 1.4; text-align: center;">
+      يمكن التحقق من صحة الاتصال عبر نظام إدارة الأعمال، من خلال التحقق من البيانات عبر البريد الإلكتروني أو الرسائل القصيرة.
+    </p>
+  </div>
+  
+  <div class="disclaimer-text" style="padding: 6px 16px; background: ${
     colors.bg
   }; border-top: 1px solid ${colors.border}; text-align: right;">
     <p style="font-size: 10px; color: ${
