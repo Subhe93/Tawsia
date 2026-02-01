@@ -593,11 +593,11 @@ function generateWidgetHTML(params: {
     </div>
     <div style="display: flex; align-items: center; gap: 8px;">
       <a href="${companyUrl}" target="_blank" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 500; transition: all 0.3s; border: none; cursor: pointer;">
+      <span>عرض المزيد</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
-        <span>عرض المزيد</span>
       </a>
       <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 500; transition: all 0.3s; border: none; cursor: pointer;">
       <span>اكتب توصية</span>
@@ -634,11 +634,11 @@ function generateWidgetHTML(params: {
     <!-- Row 3: Buttons + Logo -->
     <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
       <a href="${companyUrl}" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 11px; font-weight: 500;">
+      <span>عرض المزيد</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
-        <span>عرض المزيد</span>
       </a>
       <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 11px; font-weight: 500;">
       <span>اكتب توصية</span>
@@ -785,11 +785,11 @@ function generateWidgetHTML(params: {
     </div>
     <div style="display: flex; align-items: center; gap: 8px;">
       <a href="${companyUrl}" target="_blank" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 500; transition: all 0.3s; border: none; cursor: pointer;">
+        <span>عرض المزيد</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
-        <span>عرض المزيد</span>
       </a>
       <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 500; transition: all 0.3s; border: none; cursor: pointer;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
