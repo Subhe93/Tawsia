@@ -54,7 +54,7 @@ export function CompanyWidgetDialog({ companyId, companyName, companySlug }: Com
       }
     }
     switch (size) {
-      case 'xl': return '210'
+      case 'xl': return '240'
       case 'l': return '160'
       case 'm': return '125'
       case 's': return '45'
