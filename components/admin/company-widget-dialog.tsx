@@ -54,7 +54,7 @@ export function CompanyWidgetDialog({ companyId, companyName, companySlug }: Com
       }
     }
     switch (size) {
-      case 'xl': return '240'
+      case 'xl': return '250'
       case 'l': return '160'
       case 'm': return '125'
       case 's': return '45'
@@ -63,34 +63,43 @@ export function CompanyWidgetDialog({ companyId, companyName, companySlug }: Com
   }
 
   const embedCode = `<!-- Tawsia Reviews Widget for ${companyName} -->
-<iframe 
-  src="${widgetUrl}"
-  width="100%" 
-  height="${getEmbedHeight()}"
-  frameborder="0"
-  scrolling="${orientation === 'vertical' || size === 'xl' ? 'yes' : 'no'}"
-  style="border: none; border-radius: 8px;"
-></iframe>`
+<div style="all:initial; display:block; max-width:100%; font-family:sans-serif;">
+    <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px;">
+        <iframe 
+          src="${widgetUrl}"
+          width="100%" 
+          height="${getEmbedHeight()}"
+          frameborder="0"
+          scrolling="${orientation === 'vertical' || size === 'xl' ? 'yes' : 'no'}"
+          style="border: none; border-radius: 8px;"
+        ></iframe>
+        <div style="text-align:left; padding:4px 12px 8px;">
+            <a href="https://twsia.com" target="_blank" 
+               style="all:unset; cursor:pointer; color:#9ca3af; font-size:11px; letter-spacing:0.5px; transition:0.3s;"
+               onmouseover="this.style.color='#6b7280'" onmouseout="this.style.color='#9ca3af'">
+               Powered by <span style="font-weight:bold;">Tawsia</span>
+            </a>
+        </div>
+    </div>
+</div>`
 
   const scriptCode = `<!-- Tawsia Reviews Widget Script for ${companyName} -->
+<div id="tawsia-reviews-widget"></div>
 <script>
 (function() {
-  var iframe = document.createElement('iframe');
-  iframe.src = '${widgetUrl}';
-  iframe.width = '100%';
-  iframe.height = '${getEmbedHeight()}';
-  iframe.frameBorder = '0';
-  iframe.scrolling = '${orientation === 'vertical' || size === 'xl' ? 'yes' : 'no'}';
-  iframe.style.border = 'none';
-  iframe.style.borderRadius = '8px';
-  
   var container = document.getElementById('tawsia-reviews-widget');
   if (container) {
-    container.appendChild(iframe);
+    container.innerHTML = '<div style="all:initial; display:block; max-width:100%; font-family:sans-serif;">' +
+      '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px;">' +
+        '<iframe src="${widgetUrl}" width="100%" height="${getEmbedHeight()}" frameborder="0" scrolling="${orientation === 'vertical' || size === 'xl' ? 'yes' : 'no'}" style="border:none; border-radius:8px;"></iframe>' +
+        '<div style="text-align:left; padding:4px 12px 8px;">' +
+          '<a href="https://twsia.com" target="_blank" style="all:unset; cursor:pointer; color:#9ca3af; font-size:11px; letter-spacing:0.5px;" onmouseover="this.style.color=\'#6b7280\'" onmouseout="this.style.color=\'#9ca3af\'">Powered by <span style="font-weight:bold;">Tawsia</span></a>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
   }
 })();
-</script>
-<div id="tawsia-reviews-widget"></div>`
+</script>`
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
