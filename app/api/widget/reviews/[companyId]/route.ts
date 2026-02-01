@@ -600,11 +600,11 @@ function generateWidgetHTML(params: {
         <span>عرض المزيد</span>
       </a>
       <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 500; transition: all 0.3s; border: none; cursor: pointer;">
+      <span>اكتب توصية</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
         </svg>
-        <span>اكتب توصية</span>
       </a>
       <a href="https://twsia.com" target="_blank" style="display: flex; align-items: center;">
         <img src="https://twsia.com/img/twsia-logo.png" alt="Tawsia" style="height: 28px; width: auto;" />
@@ -641,11 +641,11 @@ function generateWidgetHTML(params: {
         <span>عرض المزيد</span>
       </a>
       <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 11px; font-weight: 500;">
+      <span>اكتب توصية</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
         </svg>
-        <span>اكتب توصية</span>
       </a>
       <a href="https://twsia.com" target="_blank" style="display: flex; align-items: center;">
         <img src="https://twsia.com/img/twsia-logo.png" alt="Tawsia" style="height: 22px; width: auto;" />
@@ -727,11 +727,11 @@ function generateWidgetHTML(params: {
         <span>المزيد</span>
       </a>
       <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: ${inlineButtonPadding}; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: ${inlineButtonFontSize}; font-weight: 500; transition: all 0.3s; border: none; cursor: pointer;">
+      <span> اكتب توصية</span>
         <svg width="${inlineIconSize}" height="${inlineIconSize}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
         </svg>
-        <span> اكتب توصية</span>
       </a>
       <a href="https://twsia.com" target="_blank" style="display: flex; align-items: center;">
         <img src="https://twsia.com/img/twsia-logo.png" alt="Tawsia" style="height: ${
