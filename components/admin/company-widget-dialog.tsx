@@ -63,20 +63,17 @@ export function CompanyWidgetDialog({ companyId, companyName, companySlug }: Com
   }
 
   const embedCode = `<!-- Tawsia Reviews Widget for ${companyName} -->
-<div style="all:initial; display:block; max-width:100%; font-family:sans-serif;">
-    <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px; box-sizing:border-box;">
-        <iframe title="Tawsia Customer Reviews" 
+<div style="all:initial; display:block; max-width:100%; font-family:sans-serif; line-height:0; font-size:0;">
+    <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px; box-sizing:border-box; display:inline-block; width:100%; line-height:0;">
+        <iframe style="display:block; border-radius:10px 10px 0 0; width:100%; margin:0; vertical-align:bottom;" 
+                title="Tawsia Customer Reviews" 
                 src="${widgetUrl}" 
                 width="100%" 
                 height="${getEmbedHeight()}" 
-                frameborder="0" 
-                style="display:block; border-radius:10px 10px 0 0; width:100%;"></iframe>
-        <div style="text-align:left; padding:2px 12px 6px; background:#ffffff; border-radius:0 0 12px 12px;">
-            <a href="https://twsia.com" target="_blank" rel="noopener" aria-label="Powered by Tawsia"
-               style="all:unset; cursor:pointer; color:#000000; font-size:11px; letter-spacing:0.2px; display:inline-block; transition:0.2s; opacity:0.7;"
-               onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
-               Powered by Tawsia
-            </a>
+                frameborder="0"></iframe>
+        <div style="text-align:left; padding:0px 12px 6px; background:#ffffff; border-radius:0 0 12px 12px; font-size:11px; line-height:1;">
+            <a style="all:unset; cursor:pointer; color:#000000; font-size:11px; display:inline-block; opacity:0.8; vertical-align:top;" 
+               href="https://twsia.com" target="_blank" rel="noopener" aria-label="Powered by Tawsia">Powered by Tawsia</a>
         </div>
     </div>
 </div>`
@@ -87,11 +84,11 @@ export function CompanyWidgetDialog({ companyId, companyName, companySlug }: Com
 (function() {
   var container = document.getElementById('tawsia-reviews-widget');
   if (container) {
-    container.innerHTML = '<div style="all:initial; display:block; max-width:100%; font-family:sans-serif;">' +
-      '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px; box-sizing:border-box;">' +
-        '<iframe title="Tawsia Customer Reviews" src="${widgetUrl}" width="100%" height="${getEmbedHeight()}" frameborder="0" style="display:block; border-radius:10px 10px 0 0; width:100%;"></iframe>' +
-        '<div style="text-align:left; padding:2px 12px 6px; background:#ffffff; border-radius:0 0 12px 12px;">' +
-          '<a href="https://twsia.com" target="_blank" rel="noopener" aria-label="Powered by Tawsia" style="all:unset; cursor:pointer; color:#000000; font-size:11px; letter-spacing:0.2px; display:inline-block; transition:0.2s; opacity:0.7;" onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'0.7\'">Powered by Tawsia</a>' +
+    container.innerHTML = '<div style="all:initial; display:block; max-width:100%; font-family:sans-serif; line-height:0; font-size:0;">' +
+      '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px; box-sizing:border-box; display:inline-block; width:100%; line-height:0;">' +
+        '<iframe style="display:block; border-radius:10px 10px 0 0; width:100%; margin:0; vertical-align:bottom;" title="Tawsia Customer Reviews" src="${widgetUrl}" width="100%" height="${getEmbedHeight()}" frameborder="0"></iframe>' +
+        '<div style="text-align:left; padding:0px 12px 6px; background:#ffffff; border-radius:0 0 12px 12px; font-size:11px; line-height:1;">' +
+          '<a style="all:unset; cursor:pointer; color:#000000; font-size:11px; display:inline-block; opacity:0.8; vertical-align:top;" href="https://twsia.com" target="_blank" rel="noopener" aria-label="Powered by Tawsia">Powered by Tawsia</a>' +
         '</div>' +
       '</div>' +
     '</div>';
