@@ -105,20 +105,18 @@ export default function CompanyWidgetPage() {
 
   const embedCode = `<!-- Tawsia Reviews Widget -->
 <div style="all:initial; display:block; max-width:100%; font-family:sans-serif;">
-    <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px;">
-        <iframe 
-          src="${widgetUrl}"
-          width="100%" 
-          height="${getEmbedHeight()}"
-          frameborder="0"
-          scrolling="${orientation === 'vertical' || size === 'xl' ? 'yes' : 'no'}"
-          style="border: none; border-radius: 8px;"
-        ></iframe>
-        <div style="text-align:left; padding:4px 12px 8px;">
-            <a href="https://twsia.com" target="_blank" 
-               style="all:unset; cursor:pointer; color:#9ca3af; font-size:11px; letter-spacing:0.5px; transition:0.3s;"
-               onmouseover="this.style.color='#6b7280'" onmouseout="this.style.color='#9ca3af'">
-               Powered by <span style="font-weight:bold;">Tawsia</span>
+    <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px; box-sizing:border-box;">
+        <iframe title="Tawsia Customer Reviews" 
+                src="${widgetUrl}" 
+                width="100%" 
+                height="${getEmbedHeight()}" 
+                frameborder="0" 
+                style="display:block; border-radius:10px 10px 0 0; width:100%;"></iframe>
+        <div style="text-align:left; padding:2px 12px 6px; background:#ffffff; border-radius:0 0 12px 12px;">
+            <a href="https://twsia.com" target="_blank" rel="noopener" aria-label="Powered by Tawsia"
+               style="all:unset; cursor:pointer; color:#000000; font-size:11px; letter-spacing:0.2px; display:inline-block; transition:0.2s; opacity:0.7;"
+               onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+               Powered by Tawsia
             </a>
         </div>
     </div>
@@ -131,10 +129,10 @@ export default function CompanyWidgetPage() {
   var container = document.getElementById('tawsia-reviews-widget');
   if (container) {
     container.innerHTML = '<div style="all:initial; display:block; max-width:100%; font-family:sans-serif;">' +
-      '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px;">' +
-        '<iframe src="${widgetUrl}" width="100%" height="${getEmbedHeight()}" frameborder="0" scrolling="${orientation === 'vertical' || size === 'xl' ? 'yes' : 'no'}" style="border:none; border-radius:8px;"></iframe>' +
-        '<div style="text-align:left; padding:4px 12px 8px;">' +
-          '<a href="https://twsia.com" target="_blank" style="all:unset; cursor:pointer; color:#9ca3af; font-size:11px; letter-spacing:0.5px;" onmouseover="this.style.color=\'#6b7280\'" onmouseout="this.style.color=\'#9ca3af\'">Powered by <span style="font-weight:bold;">Tawsia</span></a>' +
+      '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:2px; box-sizing:border-box;">' +
+        '<iframe title="Tawsia Customer Reviews" src="${widgetUrl}" width="100%" height="${getEmbedHeight()}" frameborder="0" style="display:block; border-radius:10px 10px 0 0; width:100%;"></iframe>' +
+        '<div style="text-align:left; padding:2px 12px 6px; background:#ffffff; border-radius:0 0 12px 12px;">' +
+          '<a href="https://twsia.com" target="_blank" rel="noopener" aria-label="Powered by Tawsia" style="all:unset; cursor:pointer; color:#000000; font-size:11px; letter-spacing:0.2px; display:inline-block; transition:0.2s; opacity:0.7;" onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'0.7\'">Powered by Tawsia</a>' +
         '</div>' +
       '</div>' +
     '</div>';
