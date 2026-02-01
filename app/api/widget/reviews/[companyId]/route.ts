@@ -612,46 +612,47 @@ function generateWidgetHTML(params: {
     </div>
   </div>
   
-  <!-- Mobile Summary - Grid Layout -->
+  <!-- Mobile Summary - Two Column Layout -->
   <div class="summary-mobile" style="display: none; padding: 10px; border-top: 1px solid ${
     colors.border
   }; background: ${colors.bg};">
-    <!-- Row 1: Labels -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center; margin-bottom: 4px;">
-      <span style="color: ${colors.textSecondary}; font-size: 11px;">إجمالي التوصيات</span>
-      <span style="color: ${colors.textSecondary}; font-size: 11px;">متوسط التقييم</span>
-    </div>
-    <!-- Row 2: Values -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center; margin-bottom: 10px;">
-      <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="${colors.star}" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-        </svg>
-        <span style="font-weight: 600; color: ${colors.text}; font-size: 14px;">${totalReviews}</span>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+      <!-- First Column: Total Rating -->
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+        <span style="color: ${colors.textSecondary}; font-size: 11px;">إجمالي التوصيات</span>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="${colors.star}" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+          <span style="font-weight: 600; color: ${colors.text}; font-size: 16px;">${totalReviews}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <a href="${companyUrl}" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 5px 8px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 10px; font-weight: 500;">
+            <span>عرض المزيد</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </a>
+          <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 5px 8px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 10px; font-weight: 500;">
+            <span>اكتب توصية</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </a>
+        </div>
       </div>
-      <span style="font-weight: 600; color: ${colors.text}; font-size: 14px;">${averageRating.toFixed(1)}/5</span>
+      <!-- Second Column: Average Rating -->
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+        <span style="color: ${colors.textSecondary}; font-size: 11px;">متوسط التقييم</span>
+        <span style="font-weight: 600; color: ${colors.text}; font-size: 16px;">${averageRating.toFixed(1)}/5</span>
+        <a href="https://twsia.com" target="_blank" style="display: flex; align-items: center;">
+          <img src="https://twsia.com/img/twsia-logo.png" alt="Tawsia" style="height: 22px; width: auto;" />
+        </a>
+      </div>
     </div>
-    <!-- Row 3: Buttons + Logo -->
-    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
-      <a href="${companyUrl}" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 11px; font-weight: 500;">
-      <span>عرض المزيد</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-          <circle cx="12" cy="12" r="3"></circle>
-        </svg>
-      </a>
-      <a href="${companyUrl}/add-review" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 11px; font-weight: 500;">
-      <span>اكتب توصية</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-        </svg>
-      </a>
-      <a href="https://twsia.com" target="_blank" style="display: flex; align-items: center;">
-        <img src="https://twsia.com/img/twsia-logo.png" alt="Tawsia" style="height: 22px; width: auto;" />
-      </a>
-    </div>
-    <!-- Row 4: Disclaimer text for mobile -->
+    <!-- Disclaimer text for mobile -->
     <p style="font-size: 9px; color: ${colors.textSecondary}; margin: 8px 0 0 0; line-height: 1.4; text-align: right;">
       يمكن التحقق من صحة الاتصال عبر نظام إدارة الأعمال، من خلال التحقق من البيانات عبر البريد الإلكتروني أو الرسائل القصيرة.
     </p>
