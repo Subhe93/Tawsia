@@ -627,8 +627,7 @@ function generateWidgetHTML(params: {
           <span style="font-weight: 600; color: ${colors.text}; font-size: 16px;">${totalReviews}</span>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
-          <a href="${companyUrl}" target="_blank" style="display: flex; align-items: center; gap: 4px; padding: 5px 8px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 10px; font-weight: 500;">
-            <span>عرض المزيد</span>
+          <a href="${companyUrl}" target="_blank" style="display: flex; align-items: center; justify-content: center; padding: 5px 8px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 10px; font-weight: 500;">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
