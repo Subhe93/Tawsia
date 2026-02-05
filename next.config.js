@@ -1,3 +1,5 @@
+const { getRedirectsFromCsv } = require("./rediract_doc/redirects-from-csv");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // تحسين الأداء والـ SEO
@@ -245,12 +247,16 @@ const nextConfig = {
 
   // إعادة التوجيه للـ SEO
   async redirects() {
+    const csvRedirects = getRedirectsFromCsv();
+
     return [
       {
         source: "/home",
         destination: "/",
         permanent: true,
       },
+      // إعادة التوجيه القادمة من ملف CSV
+      ...csvRedirects,
     ];
   },
 
