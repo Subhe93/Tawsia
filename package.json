@@ -20,8 +20,7 @@
     "sitemap:migrate": "node scripts/migrate-existing-sitemap.js",
     "sitemap:add-missing": "node scripts/add-missing-pages.js",
     "sitemap:build": "node scripts/build-all-sitemaps.js",
-    "redirects:generate": "node scripts/generate-redirects-data.js",
-    "prebuild": "npm run redirects:generate"
+    "redirects:generate": "node scripts/generate-redirects-data.js"
   },
   "prisma": {
     "seed": "node lib/database/seed.js"

@@ -29,9 +29,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 301)
   }
 
-  // 2) استبدال كلمات من old-changed-slug.csv
+  // 2) استبدال كلمات من old-changed-slug.csv (إلا إذا الهدف مصدر في 800 → نتجاهل لتفادي حلقة)
   const transformedPath = applySlugReplacements(pathname)
-  if (transformedPath !== pathname) {
+  if (transformedPath !== pathname && !explicitRedirects.has(transformedPath)) {
     const url = new URL(transformedPath, request.url)
     url.search = search
     return NextResponse.redirect(url, 301)
