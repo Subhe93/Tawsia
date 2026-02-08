@@ -1,31 +1,56 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { explicitRedirects, slugReplacements } from '@/lib/redirects-data.generated'
+
+// خريطة استبدال الكلمات في المسار (تحميل مرة واحدة)
+const slugMap = new Map(slugReplacements.map((r) => [r.from, r.to]))
+
+function applySlugReplacements(pathname: string): string {
+  return pathname
+    .split('/')
+    .map((segment) =>
+      segment
+        .split('-')
+        .map((token) => slugMap.get(token) ?? token)
+        .join('-')
+    )
+    .join('/')
+}
 
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+  const search = request.nextUrl.search
+
+  // 1) أولوية: توجيه صريح من 800.csv
+  const explicitDest = explicitRedirects.get(pathname)
+  if (explicitDest != null) {
+    const url = new URL(explicitDest, request.url)
+    url.search = search
+    return NextResponse.redirect(url, 301)
+  }
+
+  // 2) استبدال كلمات من old-changed-slug.csv
+  const transformedPath = applySlugReplacements(pathname)
+  if (transformedPath !== pathname) {
+    const url = new URL(transformedPath, request.url)
+    url.search = search
+    return NextResponse.redirect(url, 301)
+  }
+
   const response = NextResponse.next()
-  
+
   // منع الكاش في داشبوردات الأدمن والشركات
-  if (request.nextUrl.pathname.startsWith('/admin') || 
-      request.nextUrl.pathname.startsWith('/company-dashboard')) {
-    
-    // إضافة headers لمنع الكاش
+  if (pathname.startsWith('/admin') || pathname.startsWith('/company-dashboard')) {
     response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
     response.headers.set('Pragma', 'no-cache')
     response.headers.set('Expires', '0')
     response.headers.set('Surrogate-Control', 'no-store')
-    
-    // منع الكاش في المتصفح
     response.headers.set('X-Accel-Expires', '0')
     response.headers.set('X-Robots-Tag', 'noindex, nofollow, nosnippet, noarchive')
-    
-    // إضافة timestamp لضمان التحديث
     response.headers.set('X-Timestamp', new Date().getTime().toString())
   }
-  
-  // منع الكاش لـ API routes الخاصة بالداشبوردات
-  if (request.nextUrl.pathname.startsWith('/api/admin') ||
-      request.nextUrl.pathname.startsWith('/api/company')) {
-    
+
+  if (pathname.startsWith('/api/admin') || pathname.startsWith('/api/company')) {
     response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
     response.headers.set('Pragma', 'no-cache')
     response.headers.set('Expires', '0')
