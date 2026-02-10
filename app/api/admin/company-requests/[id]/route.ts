@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
+import {
+  createEnglishSlug,
+  createUniqueSlug,
+} from '@/lib/utils/database-helpers'
 
 // دالة إرسال البريد الإلكتروني لإشعار الموافقة
 async function sendCompanyApprovalEmail({
@@ -81,13 +85,16 @@ export async function PATCH(
         }, { status: 400 })
       }
 
+      // إنشاء slug من الاسم (مع تنقية الكلمات المحظورة وضمان التفرد)
+      const baseSlug =
+        createEnglishSlug(companyRequest.companyName) || 'company'
+      const slug = await createUniqueSlug('company', baseSlug)
+
       // إنشاء الشركة
       const company = await prisma.company.create({
         data: {
           name: companyRequest.companyName,
-          slug: companyRequest.companyName.toLowerCase()
-            .replace(/\s+/g, '-')
-            .replace(/[^\w\-]+/g, ''),
+          slug,
           description: companyRequest.description,
           shortDescription: companyRequest.description.substring(0, 200),
           categoryId: category.id,

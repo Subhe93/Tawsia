@@ -360,7 +360,7 @@ export default function AdminCompaniesPage() {
             <div className="relative">
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="البحث عن الشركات..."
+                placeholder="البحث بالاسم أو الرابط (slug) أو البريد أو الهاتف..."
                 value={search}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="pr-10"

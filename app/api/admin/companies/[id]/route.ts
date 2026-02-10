@@ -8,6 +8,7 @@ import {
   updateCompany,
 } from "@/lib/database/admin-queries";
 import prisma from "@/lib/prisma";
+import { sanitizeSlug } from "@/lib/utils/banned-slug-words";
 
 export async function GET(
   request: NextRequest,
@@ -106,6 +107,11 @@ export async function PATCH(
         },
         { status: 400 },
       );
+    }
+
+    // تنقية السلوغ من الكلمات المحظورة عند التعديل
+    if (data.slug) {
+      data.slug = sanitizeSlug(data.slug) || data.slug;
     }
 
     if (data.categoryId && !data.categoryId.trim()) {

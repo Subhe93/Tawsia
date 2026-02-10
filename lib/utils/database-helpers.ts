@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { sanitizeSlug } from '@/lib/utils/banned-slug-words';
 
 // دالة لتحديث إحصائيات البلدان
 export async function updateCountryStats() {
@@ -157,7 +158,9 @@ export function createEnglishSlug(text: string, suffix?: string): string {
   if (suffix) {
     slug += `-${suffix}`;
   }
-  
+
+  slug = sanitizeSlug(slug);
+
   return slug || 'company';
 }
 

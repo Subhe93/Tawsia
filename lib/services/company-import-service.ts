@@ -3,6 +3,10 @@ import { ImageDownloadService } from "./image-download-service";
 import { DataValidationService } from "./data-validation-service-simple";
 import { CategoryMappingService } from "./category-mapping-service-simple";
 import { LocationMappingService } from "./location-mapping-service-simple";
+import {
+  createEnglishSlug,
+  createUniqueSlug,
+} from "@/lib/utils/database-helpers";
 
 const prisma = new PrismaClient();
 
@@ -496,76 +500,9 @@ export class CompanyImportService {
   }
 
   private async createCompany(data: any) {
-    // إنشاء slug فريد بالإنجليزية فقط (نفس منطق صفحة إضافة الشركة)
-    const generateSlugFromName = (name: string) => {
-      const arabicToEnglish: { [key: string]: string } = {
-        ا: "a",
-        أ: "a",
-        إ: "i",
-        آ: "aa",
-        ب: "b",
-        ت: "t",
-        ث: "th",
-        ج: "j",
-        ح: "h",
-        خ: "kh",
-        د: "d",
-        ذ: "dh",
-        ر: "r",
-        ز: "z",
-        س: "s",
-        ش: "sh",
-        ص: "s",
-        ض: "d",
-        ط: "t",
-        ظ: "z",
-        ع: "a",
-        غ: "gh",
-        ف: "f",
-        ق: "q",
-        ك: "k",
-        ل: "l",
-        م: "m",
-        ن: "n",
-        ه: "h",
-        و: "w",
-        ي: "y",
-        ى: "a",
-        ة: "h",
-        ء: "a",
-        ئ: "e",
-        ؤ: "o",
-      };
-
-      let result = name.toLowerCase().trim();
-
-      // تحويل "ال" التعريف
-      result = result.replace(/ال/g, "al-");
-
-      // تحويل الأحرف العربية
-      Object.entries(arabicToEnglish).forEach(([arabic, english]) => {
-        const regex = new RegExp(arabic, "g");
-        result = result.replace(regex, english);
-      });
-
-      return (
-        result
-          .replace(/\s+/g, "-")
-          .replace(/[^\w\-]/g, "")
-          .replace(/\-+/g, "-")
-          .replace(/^-+/, "")
-          .replace(/-+$/, "") || "company"
-      );
-    };
-
-    const baseSlug = generateSlugFromName(data.name);
-    let slug = baseSlug;
-    let counter = 1;
-
-    while (await prisma.company.findUnique({ where: { slug } })) {
-      slug = `${baseSlug}-${counter}`;
-      counter++;
-    }
+    // إنشاء slug فريد بالإنجليزية مع تنقية الكلمات المحظورة (نفس منطق الداشبورد)
+    const baseSlug = createEnglishSlug(data.name) || "company";
+    const slug = await createUniqueSlug("company", baseSlug);
 
     return prisma.company.create({
       data: {

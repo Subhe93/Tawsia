@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getCompaniesForAdmin, createCompany } from '@/lib/database/admin-queries'
 import prisma from '@/lib/prisma'
+import { sanitizeSlug } from '@/lib/utils/banned-slug-words'
 
 export async function GET(request: NextRequest) {
   try {
@@ -97,10 +98,13 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
+    // تنقية السلوغ من الكلمات المحظورة (مثل kar → car)
+    const slug = sanitizeSlug(data.slug) || data.slug
+
     // استخدام دالة createCompany من admin-queries
     const company = await createCompany({
       name: data.name,
-      slug: data.slug,
+      slug,
       description: data.description,
       shortDescription: data.shortDescription,
       longDescription: data.longDescription,

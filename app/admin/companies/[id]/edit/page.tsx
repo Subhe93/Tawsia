@@ -25,6 +25,10 @@ import { useToast } from '@/hooks/use-toast'
 
 import { DAYS_OF_WEEK_ARABIC, ALL_DAYS_OF_WEEK } from '@/lib/types/working-hours'
 import { WorkingHoursEditor, WorkingHourData } from '@/components/working-hours-editor'
+import {
+  slugContainsBannedWord,
+  sanitizeSlug,
+} from '@/lib/utils/banned-slug-words'
 
 interface Country {
   id: string
@@ -811,7 +815,8 @@ export default function EditCompanyPage() {
                               .replace(/-+$/, '') || 'company';
                           };
                           
-                          const generatedSlug = generateSlugFromName(formData.name);
+                          const rawSlug = generateSlugFromName(formData.name);
+                          const generatedSlug = sanitizeSlug(rawSlug) || rawSlug;
                           setFormData(prev => ({ ...prev, slug: generatedSlug }));
                         }
                       }}
@@ -824,6 +829,12 @@ export default function EditCompanyPage() {
                   <p className="text-xs text-gray-500">
                     يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط. سيتم استخدامه في رابط الشركة.
                   </p>
+                  {formData.slug && slugContainsBannedWord(formData.slug) && (
+                    <p className="text-xs text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400 px-2 py-1.5 rounded mt-1">
+                      الرابط يحتوي على كلمة تم استبدالها في الموقع. سيتم تطبيق التنظيف تلقائياً عند الحفظ (مثال: الرابط بعد التنظيف:{' '}
+                      <span className="font-mono" dir="ltr">{sanitizeSlug(formData.slug)}</span>).
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">

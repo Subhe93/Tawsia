@@ -273,6 +273,7 @@ export async function getCompaniesForAdmin(
     ...(search && {
       OR: [
         { name: { contains: search, mode: "insensitive" } },
+        { slug: { contains: search, mode: "insensitive" } },
         { email: { contains: search, mode: "insensitive" } },
         { phone: { contains: search, mode: "insensitive" } },
         { description: { contains: search, mode: "insensitive" } },
