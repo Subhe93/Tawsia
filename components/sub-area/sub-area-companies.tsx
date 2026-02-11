@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Building2, Star, MapPin, Phone, Globe, Search, Filter, SortAsc } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { DEFAULT_COMPANY_IMAGE } from '@/lib/constants/default-images'
 
 interface SubAreaCompaniesProps {
   subArea: {
@@ -168,17 +169,15 @@ export function SubAreaCompanies({ subArea, companies }: SubAreaCompaniesProps) 
                         )}
                       </div>
                     </div>
-                    {company.mainImage && (
-                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                        <Image
-                          src={company.mainImage}
-                          alt={company.name}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+                    <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                      <Image
+                        src={company.mainImage || DEFAULT_COMPANY_IMAGE}
+                        alt={company.name}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
                 </CardHeader>
 

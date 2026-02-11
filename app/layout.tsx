@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang="ar-sy" dir="rtl" suppressHydrationWarning>
       <body className={cairo.className}>
         <NextAuthProvider>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

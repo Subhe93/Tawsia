@@ -47,8 +47,8 @@ function transformCompanyForComponents(company: CompanyWithRelations): Company {
     category: company.category.name,
     city: company.city.name,
     country: company.country.name,
-    image: company.mainImage || '',
-    logoImage: company.logoImage || undefined,
+    image: company.mainImage || '/img/default-company-cover.svg',
+    logoImage: company.logoImage || '/img/default-company-logo.svg',
     images: company.images.map(img => img.imageUrl),
     phone: company.phone || '',
     email: company.email || '',
@@ -281,14 +281,6 @@ export default async function CompanyPage({
             __html: JSON.stringify(organizationSchema),
           }}
         /> */}
-
-        {/* JSON-LD Schema للموقع */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(websiteSchema),
-          }}
-        />
 
         {/* JSON-LD Schema للشركات المشابهة */}
         {/* {similarCompaniesSchema && (

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Search, Loader2, Building2, MapPin, Globe, Tag } from 'lucide-react';
+import { DEFAULT_COMPANY_LOGO } from '@/lib/constants/default-images';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useCountry } from '@/components/providers/country-provider';
 import Link from 'next/link';
@@ -234,13 +235,12 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
                     className="flex items-center space-x-3 space-x-reverse p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                   >
                     <div className="w-10 h-10 relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
-                      {company.logoImage ? (
-                        <Image src={company.logoImage} alt={company.name} fill className="object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Building2 className="h-5 w-5 text-gray-400" />
-                        </div>
-                      )}
+                      <Image
+                        src={company.logoImage || DEFAULT_COMPANY_LOGO}
+                        alt={company.name}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 dark:text-white">{company.name}</p>

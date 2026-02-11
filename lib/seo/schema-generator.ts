@@ -310,7 +310,7 @@ export function generateWebsiteSchema(baseUrl: string) {
         "@type": "EntryPoint",
         urlTemplate: `${baseUrl}/search?q={search_term_string}`,
       },
-      query: "required name=search_term_string",
+      "query-input": "required name=search_term_string",
     },
     publisher: {
       "@type": "Organization",

@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic"; 
 import Link from 'next/link';
 import Image from 'next/image';
+import { DEFAULT_COMPANY_IMAGE } from '@/lib/constants/default-images';
 import { useSearchParams } from 'next/navigation';
 import { Star, MapPin, Phone, Globe, Verified } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -79,7 +80,7 @@ export function CompaniesGrid({ companies, pagination }: CompaniesGridProps) {
           >
             <div className="relative h-48 overflow-hidden">
               <Image
-                src={company.mainImage || 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg'}
+                src={company.mainImage || DEFAULT_COMPANY_IMAGE}
                 alt={company.name}
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-300"

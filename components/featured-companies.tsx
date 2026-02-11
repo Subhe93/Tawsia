@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star, MapPin, Tag } from 'lucide-react';
+import { DEFAULT_COMPANY_IMAGE } from '@/lib/constants/default-images';
 import { Badge } from '@/components/ui/badge';
 
 interface FeaturedCompany {
@@ -68,18 +69,12 @@ export function FeaturedCompanies({ companies: featuredCompanies, selectedCountr
             style={{ animationDelay: `${featuredCompanies.indexOf(company) * 150}ms` }}
           >
             <div className="relative h-48 overflow-hidden">
-              {company.mainImage ? (
-                <Image
-                  src={company.mainImage}
-                  alt={company.name}
-                  fill
-                  className="object-cover group-hover:scale-120 transition-transform duration-700"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-white text-4xl font-bold">{company.name.charAt(0)}</span>
-                </div>
-              )}
+              <Image
+                src={company.mainImage || DEFAULT_COMPANY_IMAGE}
+                alt={company.name}
+                fill
+                className="object-cover group-hover:scale-120 transition-transform duration-700"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent group-hover:from-black/40 transition-all duration-300" />
               {company.isFeatured && (
                 <div className="absolute top-4 right-4">

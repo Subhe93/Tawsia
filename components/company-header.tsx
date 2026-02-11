@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, MapPin, Phone, Globe, Mail, Clock, Users, CheckCircle, Facebook, Twitter, Instagram, Linkedin, Share2, Navigation, QrCode } from 'lucide-react';
+import { DEFAULT_COMPANY_IMAGE, DEFAULT_COMPANY_LOGO } from '@/lib/constants/default-images';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Company } from '@/lib/data';
@@ -84,7 +85,7 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
         {/* صورة الشركة - نفس العنصر بتصميم متجاوب */}
         <div className="relative h-48 md:h-96 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
           <Image
-            src={company.image}
+            src={company.image || DEFAULT_COMPANY_IMAGE}
             alt={company.name}
             fill
             className="object-cover transition-transform duration-700 hover:scale-105"
@@ -106,7 +107,7 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
             <div className="bg-white/95 backdrop-blur-md rounded-full p-2 shadow-lg border border-white/50">
               <div className="w-12 h-12 relative rounded-full overflow-hidden">
                 <Image
-                  src={company.logoImage || company.image}
+                  src={company.logoImage || company.image || DEFAULT_COMPANY_LOGO}
                   alt={`${company.name} لوغو`}
                   fill
                   className="object-cover"
@@ -120,7 +121,7 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
             <div className="bg-white/95 backdrop-blur-md rounded-full p-3 shadow-lg border border-white/50">
               <div className="w-16 h-16 relative rounded-full overflow-hidden">
                 <Image
-                  src={company.logoImage || company.image}
+                  src={company.logoImage || company.image || DEFAULT_COMPANY_LOGO}
                   alt={`${company.name} لوغو`}
                   fill
                   className="object-cover"

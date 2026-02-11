@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star, MapPin, Building2, ArrowLeft, Verified } from 'lucide-react';
+import { DEFAULT_COMPANY_IMAGE } from '@/lib/constants/default-images';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -70,7 +71,7 @@ export function SimilarCompanies({ companies, currentCompanySlug }: SimilarCompa
             <div className="flex items-center space-x-4 space-x-reverse p-4 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition-all duration-300">
               <div className="w-16 h-16 relative rounded-xl overflow-hidden flex-shrink-0">
                 <Image
-                  src={company.mainImage || 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg'}
+                  src={company.mainImage || DEFAULT_COMPANY_IMAGE}
                   alt={company.name}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-300"
