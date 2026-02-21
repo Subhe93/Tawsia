@@ -1,4 +1,9 @@
 import { Metadata } from "next";
+import {
+  getSafeEmail,
+  getSafePhone,
+  getSafeWebsiteUrl,
+} from "@/lib/utils/contact-sanitizer";
 
 export interface SiteStats {
   countriesCount: number;
@@ -144,7 +149,7 @@ export function generateJsonLd(stats: SiteStats) {
 export function generateCategoryMetadata(
   categoryName: string,
   categorySlug: string,
-  companiesCount: number
+  companiesCount: number,
 ): Metadata {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://twsia.com";
 
@@ -171,15 +176,19 @@ export function generateCategoryMetadata(
 }
 
 export function generateCompanyJsonLd(company: any) {
+  const safeWebsite = getSafeWebsiteUrl(company.website);
+  const safePhone = getSafePhone(company.phone);
+  const safeEmail = getSafeEmail(company.email);
+
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: company.name,
     description: company.description,
     image: company.mainImage,
-    url: company.website,
-    telephone: company.phone,
-    email: company.email,
+    url: safeWebsite || undefined,
+    telephone: safePhone || undefined,
+    email: safeEmail || undefined,
     address: {
       "@type": "PostalAddress",
       streetAddress: company.address,

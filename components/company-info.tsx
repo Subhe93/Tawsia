@@ -5,6 +5,7 @@ import { MapPin, Phone, Mail, Globe, Building2, Tag, ChevronDown, ChevronRight, 
 import { TiktokIcon } from '@/components/icons/tiktok-icon';
 import { Badge } from '@/components/ui/badge';
 import { Company } from '@/lib/data';
+import { getSafeEmail, getSafePhone, getSafeTelHref, getSafeWebsiteUrl } from '@/lib/utils/contact-sanitizer';
 
 interface CompanyInfoProps {
   company: Company;
@@ -75,6 +76,17 @@ export function CompanyInfo({ company }: CompanyInfoProps) {
 
   const longDescription = company.longDescription || company.description;
   const isLongDescription = longDescription && longDescription.length > 200;
+  const safePhone = getSafePhone(company.phone);
+  const safeTelHref = getSafeTelHref(company.phone);
+  const safeEmail = getSafeEmail(company.email);
+  const safeWebsite = getSafeWebsiteUrl(company.website);
+  const safeSocialMediaEntries = Object.entries(company.socialMedia || {}).reduce((acc, [platform, url]) => {
+    const safeUrl = getSafeWebsiteUrl(url);
+    if (safeUrl) {
+      acc.push([platform, safeUrl]);
+    }
+    return acc;
+  }, [] as Array<[string, string]>);
   
   // Memoize formatted HTML to avoid re-computation on every render
   const formattedDescription = useMemo(() => {
@@ -163,61 +175,61 @@ export function CompanyInfo({ company }: CompanyInfoProps) {
           </div>
 
           {/* Phone */}
-          {company.phone && (
+          {safePhone && safeTelHref && (
             <div className="flex items-center space-x-4 space-x-reverse">
               <Phone className="h-6 w-6 text-green-600 flex-shrink-0" />
               <a 
-                href={`tel:${company.phone}`}
+                href={safeTelHref}
                 className="text-gray-900 dark:text-white hover:text-green-600 transition-colors"
                 dir="ltr"
               >
-                {company.phone}
+                {safePhone}
               </a>
             </div>
           )}
 
           {/* Email */}
-          {company.email && (
+          {safeEmail && (
             <div className="flex items-center space-x-4 space-x-reverse">
               <Mail className="h-6 w-6 text-orange-600 flex-shrink-0" />
               <a 
-                href={`mailto:${company.email}`}
+                href={`mailto:${safeEmail}`}
                 className="text-gray-900 dark:text-white hover:text-orange-600 transition-colors"
                 dir="ltr"
               >
-                {company.email}
+                {safeEmail}
               </a>
             </div>
           )}
 
           {/* Website */}
-          {company.website && (
+          {safeWebsite && (
             <div className="flex items-center space-x-4 space-x-reverse">
               <Globe className="h-6 w-6 text-purple-600 flex-shrink-0" />
               <a 
-                href={company.website} 
+                href={safeWebsite} 
                 target="_blank" 
                 rel="noopener noreferrer nofollow"
                 className="text-gray-900 dark:text-white hover:text-purple-600 transition-colors"
               >
-                {company.website}
+                {safeWebsite}
               </a>
             </div>
           )}
 
           {/* Social Media */}
-          {(company.socialMedia.facebook || company.socialMedia.twitter || company.socialMedia.instagram || company.socialMedia.linkedin || company.socialMedia.youtube || company.socialMedia.tiktok) && (
+          {safeSocialMediaEntries.length > 0 && (
             <div className="md:col-span-2">
               <div className="flex items-center space-x-4 space-x-reverse mb-3">
                 <Building2 className="h-6 w-6 text-gray-600 flex-shrink-0" />
                 <span className="text-gray-900 dark:text-white font-medium">وسائل التواصل الاجتماعي</span>
               </div>
               <div className="flex space-x-3 space-x-reverse pr-10">
-                {Object.entries(company.socialMedia).map(([platform, url]) => 
-                  url ? (
+                {safeSocialMediaEntries.map(([platform, safeUrl]) => 
+                  safeUrl ? (
                     <a
                       key={platform}
-                      href={url}
+                      href={safeUrl}
                       target="_blank"
                       rel="noopener noreferrer nofollow"
                       className={`flex items-center justify-center w-10 h-10 rounded-full border transition-all duration-300 hover:scale-110 ${getSocialColor(platform)}`}

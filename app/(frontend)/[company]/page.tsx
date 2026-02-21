@@ -35,9 +35,14 @@ import {
 } from '@/components/ui/breadcrumb';
 import { CompanyCategoriesBadges } from '@/components/company-categories-badges';
 import { applySeoOverride } from '@/lib/seo/overrides'
+import { getSafeEmail, getSafePhone, getSafeWebsiteUrl } from '@/lib/utils/contact-sanitizer';
 
 // Transform database company to component-expected format
 function transformCompanyForComponents(company: CompanyWithRelations): Company {
+  const safePhone = getSafePhone(company.phone);
+  const safeEmail = getSafeEmail(company.email);
+  const safeWebsite = getSafeWebsiteUrl(company.website);
+
   return {
     slug: company.slug,
     name: company.name,
@@ -50,9 +55,9 @@ function transformCompanyForComponents(company: CompanyWithRelations): Company {
     image: company.mainImage || '/img/default-company-cover.svg',
     logoImage: company.logoImage || '/img/default-company-logo.svg',
     images: company.images.map(img => img.imageUrl),
-    phone: company.phone || '',
-    email: company.email || '',
-    website: company.website || '',
+    phone: safePhone || '',
+    email: safeEmail || '',
+    website: safeWebsite || '',
     address: company.address || '',
     tags: company.tags.map(tag => tag.tagName),
     rating: company.rating,
@@ -63,7 +68,10 @@ function transformCompanyForComponents(company: CompanyWithRelations): Company {
     },
     workingHours: {},
     socialMedia: company.socialMedia.reduce((acc, sm) => {
-      acc[sm.platform] = sm.url;
+      const safeUrl = getSafeWebsiteUrl(sm.url);
+      if (safeUrl) {
+        acc[sm.platform] = safeUrl;
+      }
       return acc;
     }, {} as Record<string, string>),
     services: company.services,
@@ -87,6 +95,8 @@ export async function generateMetadata(
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://twsia.com';
     const companyUrl = `${baseUrl}/${company.slug}`;
+    const safePhone = getSafePhone(company.phone) || '';
+    const safeWebsite = getSafeWebsiteUrl(company.website) || '';
 
     const titleParts = [
       company.name,
@@ -150,8 +160,8 @@ export async function generateMetadata(
         'business:contact_data:street_address': company.address || '',
         'business:contact_data:locality': company.city.name,
         'business:contact_data:region': company.country.name,
-        'business:contact_data:phone_number': company.phone || '',
-        'business:contact_data:website': company.website || '',
+        'business:contact_data:phone_number': safePhone,
+        'business:contact_data:website': safeWebsite,
       }
     };
   } catch (error) {

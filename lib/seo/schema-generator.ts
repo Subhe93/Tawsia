@@ -1,4 +1,9 @@
 import type { CompanyWithRelations } from "@/lib/types/database";
+import {
+  getSafeEmail,
+  getSafePhone,
+  getSafeWebsiteUrl,
+} from "@/lib/utils/contact-sanitizer";
 
 // Mapping of company categories to schema.org types
 const CATEGORY_SCHEMA_MAPPING = {
@@ -145,7 +150,7 @@ const PRICE_RANGE_MAPPING = {
  */
 export function getSchemaType(
   categorySlug: string,
-  categoryName: string
+  categoryName: string,
 ): string {
   // First try exact match with category slug
   if (CATEGORY_SCHEMA_MAPPING[categorySlug]) {
@@ -325,7 +330,7 @@ export function generateWebsiteSchema(baseUrl: string) {
  */
 export function generateBreadcrumbSchema(
   company: CompanyWithRelations,
-  baseUrl: string
+  baseUrl: string,
 ) {
   const breadcrumbItems = [
     {
@@ -398,8 +403,8 @@ export function generateBreadcrumbSchema(
       ? 8
       : 7
     : company.subArea
-    ? 7
-    : 6;
+      ? 7
+      : 6;
 
   breadcrumbItems.push({
     "@type": "ListItem",
@@ -420,13 +425,17 @@ export function generateBreadcrumbSchema(
  */
 export function generateCompanySchema(
   company: CompanyWithRelations,
-  baseUrl: string
+  baseUrl: string,
 ) {
   const schemaType = getSchemaType(
     company.category.slug,
-    company.category.name
+    company.category.name,
   );
   const priceRange = getPriceRange(schemaType);
+
+  const safeWebsite = getSafeWebsiteUrl(company.website);
+  const safePhone = getSafePhone(company.phone);
+  const safeEmail = getSafeEmail(company.email);
 
   // Base schema properties
   const baseSchema: any = {
@@ -434,11 +443,11 @@ export function generateCompanySchema(
     "@type": schemaType,
     name: company.name,
     description: company.description || company.shortDescription,
-    url: company.website || `${baseUrl}/${company.slug}`,
+    url: safeWebsite || `${baseUrl}/${company.slug}`,
     image: company.mainImage ? `${baseUrl}${company.mainImage}` : undefined,
     logo: company.logoImage ? `${baseUrl}${company.logoImage}` : undefined,
-    telephone: company.phone,
-    email: company.email,
+    telephone: safePhone || undefined,
+    email: safeEmail || undefined,
     address: {
       "@type": "PostalAddress",
       streetAddress: company.address,
@@ -545,7 +554,13 @@ export function generateCompanySchema(
 
   // Add social media links if available
   if (company.socialMedia && company.socialMedia.length > 0) {
-    baseSchema.sameAs = company.socialMedia.map((sm) => sm.url);
+    const safeSocialUrls = company.socialMedia
+      .map((sm) => getSafeWebsiteUrl(sm.url))
+      .filter((url): url is string => Boolean(url));
+
+    if (safeSocialUrls.length > 0) {
+      baseSchema.sameAs = safeSocialUrls;
+    }
   }
 
   // Add services/specialties as keywords
@@ -570,7 +585,7 @@ export function generateItemListSchema(
   companies: CompanyWithRelations[],
   baseUrl: string,
   listName: string,
-  listDescription?: string
+  listDescription?: string,
 ) {
   return {
     "@context": "https://schema.org",
@@ -597,9 +612,9 @@ export function generateItemListSchema(
               }
             : undefined,
         priceRange: getPriceRange(
-          getSchemaType(company.category.slug, company.category.name)
+          getSchemaType(company.category.slug, company.category.name),
         ),
-        telephone: company.phone,
+        telephone: getSafePhone(company.phone) || undefined,
         address: {
           "@type": "PostalAddress",
           streetAddress: company.address,

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Company } from '@/lib/data';
 import { ShareButton } from './share-button';
 import { QRButton } from './qr-button';
+import { getSafeEmail, getSafePhone, getSafeTelHref, getSafeWebsiteUrl } from '@/lib/utils/contact-sanitizer';
 
 interface CompanyHeaderProps {
   company: Company;
@@ -68,6 +69,10 @@ const getCountryFlag = (countryCode: string) => {
 
 export function CompanyHeader({ company }: CompanyHeaderProps) {
   const address = company.address || `${company.name}, ${company.city}, ${company.country}`;
+  const safePhone = getSafePhone(company.phone);
+  const safeTelHref = getSafeTelHref(company.phone);
+  const safeWebsite = getSafeWebsiteUrl(company.website);
+  const safeEmail = getSafeEmail(company.email);
   // Debug: Check if rating matches actual reviews
   const hasRatingDiscrepancy = company.rating > 0 && company.reviewsCount === 0;
   
@@ -226,9 +231,9 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
 
             {/* أزرار - ديسكتوب */}
             <div className="hidden md:flex flex-wrap gap-4">
-              {company.phone && (
+              {safePhone && safeTelHref && (
                 <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-6 py-3">
-                  <a href={`tel:${company.phone}`}>
+                  <a href={safeTelHref}>
                     <Phone className="h-5 w-5 ml-2" />
                     اتصل الآن
                   </a>
@@ -240,9 +245,9 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
                   الاتجاهات
                 </a>
               </Button>
-              {company.website && (
+              {safeWebsite && (
                 <Button asChild variant="outline" size="lg" className="bg-white/20 backdrop-blur-md hover:bg-white/30 text-white border-white/40 hover:border-white/60 shadow-lg transition-all duration-300 px-6 py-3">
-                  <a href={company.website} target="_blank" rel="noopener noreferrer nofollow">
+                  <a href={safeWebsite} target="_blank" rel="noopener noreferrer nofollow">
                     <Globe className="h-5 w-5 ml-2" />
                     زيارة الموقع
                   </a>
@@ -275,26 +280,26 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
 
         {/* أزرار الإجراء - موبايل فقط */}
         <div className="space-y-3 md:hidden">
-          {company.phone && (
+          {safePhone && safeTelHref && (
             <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl shadow-lg">
-              <a href={`tel:${company.phone}`}>
+              <a href={safeTelHref}>
                 <Phone className="h-5 w-5 ml-2" />
                 اتصل الآن
               </a>
             </Button>
           )}
           <div className="grid grid-cols-2 gap-3">
-            {company.website && (
+            {safeWebsite && (
               <Button asChild variant="outline" className="py-3 rounded-xl">
-                <a href={company.website} target="_blank" rel="noopener noreferrer nofollow">
+                <a href={safeWebsite} target="_blank" rel="noopener noreferrer nofollow">
                   <Globe className="h-4 w-4 ml-2" />
                   الموقع
                 </a>
               </Button>
             )}
-            {company.email && (
+            {safeEmail && (
               <Button asChild variant="outline" className="py-3 rounded-xl">
-                <a href={`mailto:${company.email}`}>
+                <a href={`mailto:${safeEmail}`}>
                   <Mail className="h-4 w-4 ml-2" />
                   راسلنا
                 </a>
