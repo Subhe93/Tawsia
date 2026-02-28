@@ -98,17 +98,7 @@ export async function generateMetadata(
     const safePhone = getSafePhone(company.phone) || '';
     const safeWebsite = getSafeWebsiteUrl(company.website) || '';
 
-    const titleParts = [
-      company.name,
-      company.country.name,
-      company.city.name
-    ];
-    
-    if (company.subArea) {
-      titleParts.push(company.subArea.name);
-    }
-    
-    const title = `${titleParts.join('، ')} | توصية`;
+    const title = `${company.name} , ${company.city.name} , ${company.country.name} | توصية`;
     
     const overridden = await applySeoOverride({
       title: title,
