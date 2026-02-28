@@ -4,6 +4,7 @@ export const revalidate = 14400;
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { Fragment } from 'react';
 import { getCompanyBySlug, getSimilarCompanies } from '@/lib/database/queries';
 import { CompanyHeader } from '@/components/company-header';
 import { CompanyGallery } from '@/components/company-gallery';
@@ -253,6 +254,35 @@ export default async function CompanyPage({
       ` ${company.category.name} مشابهة في ${company.city.name}`
     ) : null;
 
+    const categoryHref = company.subArea
+      ? `/country/${company.country.code}/city/${company.city.slug}/sub-area/${company.subArea.slug}/category/${company.category.slug}`
+      : `/country/${company.country.code}/city/${company.city.slug}/category/${company.category.slug}`;
+
+    const subCategoryHref = company.subArea
+      ? `/country/${company.country.code}/city/${company.city.slug}/sub-area/${company.subArea.slug}/category/${company.category.slug}/${company.subCategory?.slug}`
+      : `/country/${company.country.code}/city/${company.city.slug}/category/${company.category.slug}/${company.subCategory?.slug}`;
+
+    const breadcrumbItems: Array<{ label: string; href?: string; isCurrent?: boolean }> = [
+      { label: 'الرئيسية', href: '/' },
+      { label: company.country.name, href: `/country/${company.country.code}` },
+      { label: company.city.name, href: `/country/${company.country.code}/city/${company.city.slug}` },
+    ];
+
+    if (company.subArea) {
+      breadcrumbItems.push({
+        label: company.subArea.name,
+        href: `/country/${company.country.code}/city/${company.city.slug}/sub-area/${company.subArea.slug}`,
+      });
+    }
+
+    breadcrumbItems.push({ label: company.category.name, href: categoryHref });
+
+    if (company.subCategory) {
+      breadcrumbItems.push({ label: company.subCategory.name, href: subCategoryHref });
+    }
+
+    breadcrumbItems.push({ label: company.name, isCurrent: true });
+
     return (
       <>
         {/* Auto-select country in navbar */}
@@ -292,82 +322,27 @@ export default async function CompanyPage({
           />
         )} */}
 
-        <div className="container mx-auto px-4 py-8">
-          <Breadcrumb className="mb-6 text-sm">
+        <div className="container mx-auto px-4 py-2">
+          <Breadcrumb className="mb-2 text-sm">
             <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/">الرئيسية</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              {/* <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/services">جميع التصنيفات</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator /> */}
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href={`/country/${company.country.code}`}>{company.country.name}</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href={`/country/${company.country.code}/city/${company.city.slug}`}>{company.city.name}</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-         
-               {/* SubArea in breadcrumb */}
-              {company.subArea && (
-                <>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink asChild>
-                      <Link href={`/country/${company.country.code}/city/${company.city.slug}/sub-area/${company.subArea.slug}`}>
-                        {company.subArea.name}
-                      </Link>
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                </>
-              )}
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href={(() => {
-                    if (company.subArea) {
-                      return `/country/${company.country.code}/city/${company.city.slug}/sub-area/${company.subArea.slug}/category/${company.category.slug}`;
-                    } else {
-                      return `/country/${company.country.code}/city/${company.city.slug}/category/${company.category.slug}`;
-                    }
-                  })()}>{company.category.name}</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {/* Subcategory in breadcrumb */}
-              {company.subCategory && (
-                <>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink asChild>
-                      <Link href={(() => {
-                        if (company.subArea) {
-                          return `/country/${company.country.code}/city/${company.city.slug}/sub-area/${company.subArea.slug}/category/${company.category.slug}/${company.subCategory.slug}`;
-                        } else {
-                          return `/country/${company.country.code}/city/${company.city.slug}/category/${company.category.slug}/${company.subCategory.slug}`;
-                        }
-                      })()}>
-                        {company.subCategory.name}
-                      </Link>
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                </>
-              )}
-             
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{company.name}</BreadcrumbPage>
-              </BreadcrumbItem>
+              {breadcrumbItems.map((item, index) => {
+                const isLast = index === breadcrumbItems.length - 1;
+
+                return (
+                  <Fragment key={`${item.label}-${index}`}>
+                    <BreadcrumbItem>
+                      {item.isCurrent || !item.href ? (
+                        <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink asChild>
+                          <Link href={item.href}>{item.label}</Link>
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                    {!isLast && <BreadcrumbSeparator />}
+                  </Fragment>
+                );
+              })}
             </BreadcrumbList>
           </Breadcrumb>
 
