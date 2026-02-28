@@ -15,7 +15,6 @@ import { WorkingHoursDisplay } from '@/components/working-hours-display';
 import { CompanyMap } from '@/components/company-map';
 import { CompanyAwards } from '@/components/company-awards';
 import { SimilarCompanies } from '@/components/similar-companies';
-import { CompanySearch } from '@/components/company-search';
 import { CountryAutoSelect } from '@/components/company/country-auto-select';
 import type { CompanyWithRelations } from '@/lib/types/database';
 import type { Company } from '@/lib/data';
@@ -414,13 +413,6 @@ export default async function CompanyPage({
                   }}
                 />
               )}
-              
-              <CompanySearch
-                currentCity={company.city.slug}
-                currentCountry={company.country.code}
-                currentCompanySlug={company.slug}
-                cityName={company.city.name}
-              />
               
               {similarCompanies.length > 0 && (
                 <SimilarCompanies 
