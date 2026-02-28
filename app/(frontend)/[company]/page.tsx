@@ -5,7 +5,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Fragment } from 'react';
-import { getCompanyBySlug, getSimilarCompanies } from '@/lib/database/queries';
+import { getCompanyBySlug, getSimilarCompaniesPrioritized } from '@/lib/database/queries';
 import { CompanyHeader } from '@/components/company-header';
 import { CompanyGallery } from '@/components/company-gallery';
 import { CompanyInfo } from '@/components/company-info';
@@ -221,8 +221,17 @@ export default async function CompanyPage({
       );
     }
 
-    // Get similar companies with proper parameters
-    const similarCompanies = await getSimilarCompanies(company.slug, company.categoryId, company.cityId, 4);
+    // Get similar companies with prioritized matching
+    const similarCompanies = await getSimilarCompaniesPrioritized({
+      companyId: company.id,
+      companySlug: company.slug,
+      countryId: company.countryId,
+      cityId: company.cityId,
+      subAreaId: company.subAreaId,
+      categoryId: company.categoryId,
+      subCategoryId: company.subCategoryId,
+      limit: 4,
+    });
 
 
 

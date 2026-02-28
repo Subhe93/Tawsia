@@ -478,6 +478,95 @@ export async function getSimilarCompanies(
   });
 }
 
+export async function getSimilarCompaniesPrioritized(params: {
+  companyId: string;
+  companySlug?: string;
+  countryId?: string;
+  cityId?: string;
+  subAreaId?: string | null;
+  categoryId: string;
+  subCategoryId?: string | null;
+  limit?: number;
+}) {
+  const {
+    companyId,
+    companySlug,
+    countryId,
+    cityId,
+    subAreaId,
+    categoryId,
+    subCategoryId,
+    limit = 4,
+  } = params;
+
+  const includeConfig = {
+    city: true,
+    country: true,
+    category: true,
+    _count: {
+      select: {
+        reviews: {
+          where: { isApproved: true },
+        },
+      },
+    },
+  } as const satisfies Prisma.CompanyInclude;
+
+  type SimilarCompanyRecord = Prisma.CompanyGetPayload<{
+    include: typeof includeConfig;
+  }>;
+
+  const collected: SimilarCompanyRecord[] = [];
+  const excludedIds = new Set<string>([companyId]);
+
+  const prioritySteps: Prisma.CompanyWhereInput[] = [];
+
+  if (subCategoryId && subAreaId) {
+    prioritySteps.push({ subAreaId, subCategoryId });
+  }
+  if (subCategoryId && cityId) {
+    prioritySteps.push({ cityId, subCategoryId });
+  }
+  if (subCategoryId && countryId) {
+    prioritySteps.push({ countryId, subCategoryId });
+  }
+  if (subAreaId) {
+    prioritySteps.push({ subAreaId, categoryId });
+  }
+  if (cityId) {
+    prioritySteps.push({ cityId, categoryId });
+  }
+  if (countryId) {
+    prioritySteps.push({ countryId, categoryId });
+  }
+
+  for (const stepWhere of prioritySteps) {
+    const remaining = limit - collected.length;
+    if (remaining <= 0) break;
+
+    const companies = await prisma.company.findMany({
+      where: {
+        isActive: true,
+        id: { notIn: Array.from(excludedIds) },
+        ...(companySlug ? { slug: { not: companySlug } } : {}),
+        ...stepWhere,
+      },
+      include: includeConfig,
+      orderBy: [{ rating: "desc" }, { reviewsCount: "desc" }],
+      take: remaining,
+    });
+
+    for (const item of companies) {
+      if (!excludedIds.has(item.id)) {
+        excludedIds.add(item.id);
+        collected.push(item);
+      }
+    }
+  }
+
+  return collected;
+}
+
 // استعلامات المراجعات
 export async function getReviews(
   companyId?: string,
